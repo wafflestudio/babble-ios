@@ -9,13 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
-        }
-        .padding()
+     ChatRoomView(chatRoom: ChatRoom(name: "중앙도서관채팅방", tag: "#도서관", members_count: 20), chats: dayChats)
     }
 }
 
