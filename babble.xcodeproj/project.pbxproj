@@ -14,6 +14,9 @@
 		4E6A10132B750B7E00DDF754 /* babbleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6A10122B750B7E00DDF754 /* babbleTests.swift */; };
 		4E6A101D2B750B7E00DDF754 /* babbleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6A101C2B750B7E00DDF754 /* babbleUITests.swift */; };
 		4E6A101F2B750B7E00DDF754 /* babbleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6A101E2B750B7E00DDF754 /* babbleUITestsLaunchTests.swift */; };
+		4EE859822B762FAC00358B5C /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE859812B762FAC00358B5C /* ChatView.swift */; };
+		4EE859842B7653BC00358B5C /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE859832B7653BC00358B5C /* HeaderView.swift */; };
+		4EE859862B766FE600358B5C /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE859852B766FE600358B5C /* ChatViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +48,9 @@
 		4E6A10182B750B7E00DDF754 /* babbleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = babbleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E6A101C2B750B7E00DDF754 /* babbleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = babbleUITests.swift; sourceTree = "<group>"; };
 		4E6A101E2B750B7E00DDF754 /* babbleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = babbleUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4EE859812B762FAC00358B5C /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		4EE859832B7653BC00358B5C /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
+		4EE859852B766FE600358B5C /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +101,7 @@
 		4E6A0FFF2B750B7D00DDF754 /* babble */ = {
 			isa = PBXGroup;
 			children = (
+				4EE859802B762F9400358B5C /* chat */,
 				4E6A10002B750B7E00DDF754 /* babbleApp.swift */,
 				4E6A10022B750B7E00DDF754 /* ContentView.swift */,
 				4E6A10042B750B7E00DDF754 /* Assets.xcassets */,
@@ -127,6 +134,16 @@
 				4E6A101E2B750B7E00DDF754 /* babbleUITestsLaunchTests.swift */,
 			);
 			path = babbleUITests;
+			sourceTree = "<group>";
+		};
+		4EE859802B762F9400358B5C /* chat */ = {
+			isa = PBXGroup;
+			children = (
+				4EE859812B762FAC00358B5C /* ChatView.swift */,
+				4EE859832B7653BC00358B5C /* HeaderView.swift */,
+				4EE859852B766FE600358B5C /* ChatViewModel.swift */,
+			);
+			path = chat;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,7 +277,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E6A10032B750B7E00DDF754 /* ContentView.swift in Sources */,
+				4EE859822B762FAC00358B5C /* ChatView.swift in Sources */,
 				4E6A10012B750B7E00DDF754 /* babbleApp.swift in Sources */,
+				4EE859862B766FE600358B5C /* ChatViewModel.swift in Sources */,
+				4EE859842B7653BC00358B5C /* HeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
