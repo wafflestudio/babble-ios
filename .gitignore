@@ -2,3 +2,6 @@
 .DS_Store
 
 babble.xcodeproj/project.xcworkspace/xcuserdata/park.xcuserdatad/UserInterfaceState.xcuserstate
+
+babble.xcworkspace/xcuserdata/
+babble/Secrets.xcconfig
