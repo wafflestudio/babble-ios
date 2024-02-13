@@ -14,7 +14,7 @@ struct ChatRoom{
     let tag:String
     let members_count:Int
 }
-struct Chat:Identifiable{
+struct ChatModel:Identifiable{
     var id: Int
     
     let nickname:String
