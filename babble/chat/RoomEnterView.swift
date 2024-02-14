@@ -12,8 +12,14 @@ struct RoomEnterView: View {
     var nickname:String = ""
     @ObservedObject
     var viewModel:ChatViewModel
+    let onBackButtonPressed:()->()
     var body: some View {
         VStack{
+            Button{
+                onBackButtonPressed()
+            }label:{
+                Image(systemName: "chevron.left")
+            }
             TextField("닉네임",text:$nickname)
             Button{
                 viewModel.enterRoom(nickname: nickname)

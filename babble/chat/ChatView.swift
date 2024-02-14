@@ -41,7 +41,10 @@ struct ChatRoomView:View{
                     
                 }
             }.sheet(isPresented: $viewModel.notEntered, content: {
-                RoomEnterView(viewModel: viewModel)                    .navigationBarBackButtonHidden(true)
+                RoomEnterView(viewModel: viewModel) {
+                    viewModel.notEntered = false
+                    presentationMode.wrappedValue.dismiss()
+                } .navigationBarBackButtonHidden(true)
             })
         
     }
