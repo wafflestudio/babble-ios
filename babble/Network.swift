@@ -117,12 +117,13 @@ class Network {
             }
     }
     func enterChatroom(longitude:String,latitude:String,id:Int,nickname:String,completion: @escaping (EnterChatRoomResponse) -> Void,onError:@escaping (String)->Void){
-        let fullURL = URL(string: baseURL + "/api/chat/rooms/\(id)")!
-        let params = ["latitude":latitude,"longitude":longitude,"nickname":nickname]
-        do{
-            var request = try URLRequest(url: fullURL, method: .post)
-            request.httpBody =  try JSONSerialization.data(withJSONObject: params)
-            AF.request(request).responseData{ response in
+        let fullURL = URL(string: baseURL + "/api/chat/rooms/\(id)/chatters")!
+        let header:HTTPHeaders = ["Content-Type":"application/json"]
+        let params:Parameters = ["latitude":latitude,"longitude":longitude,"nickname":nickname]
+          
+            AF.request(fullURL,method:.post,parameters: params,encoding: JSONEncoding.default,headers: header,interceptor: JWTInterceptor()).responseData{ response in
+                print(response.response?.statusCode)
+
                 switch response.result{
                 case .success(let data):
                     do {
@@ -140,10 +141,8 @@ class Network {
 
                 }
             }
-        }
-        catch{
-            onError("error")
-        }
+        
+       
     
     }
     func loadChats(longitude: String, latitude:String, id:Int,completion: @escaping (ChatsResponse) -> Void,onError:@escaping (String)->Void){
@@ -222,7 +221,6 @@ struct Room: Codable, Identifiable {
     let latitude: Double
     let longitude: Double
     let name: String
-    let chatterCount: Int?
 }
 struct Chat: Codable{
     let chatterId: Int

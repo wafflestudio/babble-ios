@@ -16,22 +16,34 @@ struct ChatRoomView:View{
     @StateObject
     var viewModel: ChatViewModel
     var body: some View{
-        VStack(spacing: 0.0){
-            ChatHeaderView(name: viewModel.chatroom.name, tag: viewModel.chatroom.hashTag, members_count:     viewModel.chatroom.chatterCount ?? 0){
-                viewModel.stopPolling()
-                self.presentationMode.wrappedValue.dismiss()
-            }
-            ChatDisplayView(chats:viewModel.chatDays)
-            
-                .frame(
-                    minWidth: 0,
-                    maxWidth: .infinity,
-                    minHeight: 0,
-                    maxHeight: .infinity,
-                    alignment: .topLeading
-                ).padding(EdgeInsets(top: 5.0, leading: 0.0, bottom: 0.0, trailing: 0.0))
-            WriteView()
-        }
+       
+       
+            NavigationView{
+                VStack(spacing: 0.0){
+                    ChatHeaderView(name: viewModel.chatroom.name, tag: viewModel.chatroom.hashTag, members_count:     viewModel.chatterCount){
+                        viewModel.stopPolling()
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                    ChatDisplayView(chats:viewModel.chatDays)
+                    
+                        .frame(
+                            minWidth: 0,
+                            maxWidth: .infinity,
+                            minHeight: 0,
+                            maxHeight: .infinity,
+                            alignment: .topLeading
+                        ).padding(EdgeInsets(top: 5.0, leading: 0.0, bottom: 0.0, trailing: 0.0))
+                    WriteView()
+                 /*   NavigationLink("enter chatroom", isActive: $viewModel.notEntered){
+                        RoomEnterView(viewModel: viewModel)                    .navigationBarBackButtonHidden(true)
+                        
+                    }.frame(width: 0,height: 0).hidden()*/
+                    
+                }
+            }.sheet(isPresented: $viewModel.notEntered, content: {
+                RoomEnterView(viewModel: viewModel)                    .navigationBarBackButtonHidden(true)
+            })
+        
     }
 }
 

@@ -55,15 +55,20 @@ class ChatViewModel:ObservableObject{
     @Published
     var chatDays:[ChatDay] = []
     @Published
-    var isChatter:Bool = true
+    var notEntered:Bool = false
     @Published
     var chatroom: Room
+    @Published
+    var chatterCount:Int = 0
     init(chatRoom:Room) {
+               
         self.chatroom = chatRoom
         network.loadChats(longitude: "0.0", latitude: "0.0", id: chatroom.id, completion: {[weak self]
             response in
+            self?.notEntered = !response.isChatter
             self?.chatDays = ChatDay.from(response: response)
             self?.chatroom = response.room
+            self?.chatterCount = response.chatterCount
             self?.startPolling()
         }, onError: {
             _ in
@@ -75,7 +80,10 @@ class ChatViewModel:ObservableObject{
             timer in
             self?.network.loadChats(longitude: "0.0", latitude: "0.0", id: self!.chatroom.id){[weak self]
                 response in
+                self?.chatroom = response.room
                 self?.chatDays = ChatDay.from(response: response)
+                self?.chatterCount = response.chatterCount
+                self?.notEntered = !response.isChatter
             }onError: { error in
                 
             }
@@ -83,7 +91,7 @@ class ChatViewModel:ObservableObject{
     func enterRoom(nickname:String){
         network.enterChatroom(longitude: "0.0", latitude: "0.0", id: chatroom.id, nickname: nickname) { [weak self]
             response in
-            self?.isChatter = true
+            self?.notEntered = false
         } onError:{
             error in
             
