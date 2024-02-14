@@ -9,32 +9,19 @@ import Foundation
 import SwiftUI
 
 
-struct ChatRoom{
-    let name:String
-    let tag:String
-    let members_count:Int
-}
-struct ChatModel:Identifiable{
-    var id: Int
-    
-    let nickname:String
-    let time:String
-    let content:String
-    let color:Color
-}
-struct DayChats:Identifiable{
-    var id: Int
-    let date:String
-    let chats:[Chat]
-    
-}
+
 struct ChatRoomView:View{
-    let chatRoom:ChatRoom
-    let chats:[DayChats]
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
+    @StateObject
+    var viewModel: ChatViewModel
     var body: some View{
         VStack(spacing: 0.0){
-            ChatHeaderView(name: chatRoom.name, tag: chatRoom.tag, members_count:     chatRoom.members_count)
-            ChatDisplayView(chats:chats)
+            ChatHeaderView(name: viewModel.chatroom.name, tag: viewModel.chatroom.hashTag, members_count:     viewModel.chatroom.chatterCount ?? 0){
+                viewModel.stopPolling()
+                self.presentationMode.wrappedValue.dismiss()
+            }
+            ChatDisplayView(chats:viewModel.chatDays)
             
                 .frame(
                     minWidth: 0,
@@ -50,7 +37,7 @@ struct ChatRoomView:View{
 
 
 struct ChatDisplayView:View{
-    let chats:[DayChats]
+    let chats:[ChatDay]
     var body:some View{
         
         ScrollView{
@@ -114,34 +101,4 @@ struct WriteView:View{
 
 
 
-var sample_chat = [
-    Chat(id: 1, nickname: "user1", time: "2:30", content: "안녕하세요", color: .yellow),
-    Chat(id: 2, nickname: "user1", time: "2:30", content: "안녕하세요2", color: .yellow),
-    Chat(id: 3, nickname: "user1", time: "2:30", content: "안녕하세요3", color: .yellow),
-    Chat(id: 4, nickname: "user1", time: "2:30", content: "안녕하세요4", color: .yellow),
-    Chat(id: 5, nickname: "user1", time: "2:30", content: "안녕하세요5", color: .yellow),
-    Chat(id: 6, nickname: "user1", time: "2:30", content: "안녕하세요6\n안녕하세요", color: .yellow)
-]
-var sample_chat2 = [
-    Chat(id: 11, nickname: "user1", time: "2:30", content: "안녕하세요", color: .yellow),
-    Chat(id: 12, nickname: "user1", time: "2:30", content: "안녕하세요2", color: .yellow),
-    Chat(id: 13, nickname: "user1", time: "2:30", content: "안녕하세요3", color: .yellow),
-    Chat(id: 14, nickname: "user1", time: "2:30", content: "안녕하세요4", color: .yellow),
-    Chat(id: 15, nickname: "user1", time: "2:30", content: "안녕하세요5", color: .yellow),
-    Chat(id: 16, nickname: "user1", time: "2:30", content: "안녕하세요6", color: .yellow)
-]
-var sample_chat3 = [
-    Chat(id: 21, nickname: "user1", time: "2:30", content: "안녕하세요", color: .yellow),
-    Chat(id: 22, nickname: "user1", time: "2:30", content: "안녕하세요2", color: .yellow),
-    Chat(id: 23, nickname: "user1", time: "2:30", content: "안녕하세요3", color: .yellow),
-    Chat(id: 24, nickname: "user1", time: "2:30", content: "안녕하세요4", color: .yellow),
-    Chat(id: 25, nickname: "user1", time: "2:30", content: "안녕하세요5", color: .yellow),
-    Chat(id: 26, nickname: "user1", time: "2:30", content: "안녕하세요6", color: .yellow)
-]
-var dayChats = [DayChats(id: 1, date: "2024년 1월 10일", chats: sample_chat),DayChats(id: 2, date: "2024년 1월 11일", chats: sample_chat2),DayChats(id: 3, date: "2024년 1월 12일", chats: sample_chat3)]
-struct ChatView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        ChatRoomView(chatRoom: ChatRoom(name: "중앙도서관채팅방", tag: "#도서관", members_count: 20), chats: dayChats)
-    }
-}
+

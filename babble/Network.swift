@@ -149,8 +149,9 @@ class Network {
     func loadChats(longitude: String, latitude:String, id:Int,completion: @escaping (ChatsResponse) -> Void,onError:@escaping (String)->Void){
         let fullURL = URL(string: baseURL + "/api/chat/rooms/\(id)?latitude=\(latitude)&longitude=\(longitude)")
         AF.request(fullURL!,method: .get,interceptor: JWTInterceptor()).responseData{ response in
+            print(String(decoding: response.data!, as: UTF8.self))
+
             switch response.result {
-                
             case .success(let data):
                 do {
                     let decoder = JSONDecoder()
@@ -221,6 +222,7 @@ struct Room: Codable, Identifiable {
     let latitude: Double
     let longitude: Double
     let name: String
+    let chatterCount: Int?
 }
 struct Chat: Codable{
     let chatterId: Int

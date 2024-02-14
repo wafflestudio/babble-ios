@@ -13,10 +13,13 @@ struct ChatHeaderView:View{
     let name:String
     let tag:String
     let members_count:Int
+    let onBackButtonPressed: ()->()
     var body:some View{
         ZStack{
             HStack(){
-                backButton
+                backButton.onTapGesture {
+                    onBackButtonPressed()
+                }
                 Spacer()
             }.padding()
             HStack(){
@@ -32,6 +35,7 @@ struct ChatHeaderView:View{
         } .background(Color("Blue4"))
      
     }
+ 
   
 }
 let backButton:some View = Image(systemName: "chevron.left")
@@ -39,7 +43,9 @@ let backButton:some View = Image(systemName: "chevron.left")
 struct ChatHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(){
-            ChatHeaderView(name: "중앙도서관채팅방", tag: "#도서관", members_count: 20)
+            ChatHeaderView(name: "중앙도서관채팅방", tag: "#도서관", members_count: 20){
+                
+            }
                
             Spacer()
         }
