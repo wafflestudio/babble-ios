@@ -33,7 +33,10 @@ struct ChatRoomView:View{
                             maxHeight: .infinity,
                             alignment: .topLeading
                         ).padding(EdgeInsets(top: 5.0, leading: 0.0, bottom: 0.0, trailing: 0.0))
-                    WriteView()
+                    WriteView(onPost:{
+                        content in
+                        viewModel.postChat(content: content)
+                    })
                  /*   NavigationLink("enter chatroom", isActive: $viewModel.notEntered){
                         RoomEnterView(viewModel: viewModel)                    .navigationBarBackButtonHidden(true)
                         
@@ -54,14 +57,21 @@ struct ChatRoomView:View{
 struct ChatDisplayView:View{
     let chats:[ChatDay]
     var body:some View{
-        
-        ScrollView{
-           LazyVStack(alignment:.leading,pinnedViews: .sectionHeaders){
-                ForEach(chats) { dayChat in
-                    Section(header:Text(dayChat.date).font(.system(size:12)).padding(EdgeInsets(top: 5.0, leading: 10.0, bottom: 5.0, trailing: 10.0)).background(Color("Blue4").cornerRadius(5.0)).frame(minWidth: 0,
-                                               maxWidth: .infinity).background(Color.white)){
-                        ForEach(dayChat.chats) { chat in
-                            ChatView(content: chat.content, time: chat.time, nickname: chat.nickname, color: chat.color)
+        ScrollViewReader{value in
+            ScrollView{
+                LazyVStack(alignment:.leading,pinnedViews: .sectionHeaders){
+                    ForEach(chats) { dayChat in
+                        Section(header:Text(dayChat.date).font(.system(size:12)).padding(EdgeInsets(top: 5.0, leading: 10.0, bottom: 5.0, trailing: 10.0)).background(Color("Blue4").cornerRadius(5.0)).frame(minWidth: 0,
+                                                                                                                                                                                                              maxWidth: .infinity).background(Color.white)){
+                            ForEach(dayChat.chats) { chat in
+                                ChatView(content: chat.content, time: chat.time, nickname: chat.nickname, color: chat.color).id(chat.id)
+                            }.onChange(of:dayChat.chats.count){
+                                if let lastDay = chats.last{
+                                    if let lastChat = lastDay.chats.last{
+                                        value.scrollTo(lastChat.id)
+                                    }
+                                }
+                          }
                         }
                     }
                 }
@@ -93,6 +103,8 @@ struct ChatView:View{
     
 }
 struct WriteView:View{
+    var onPost:(String)->()
+
     @State
     var text:String = ""
     @FocusState
@@ -102,6 +114,7 @@ struct WriteView:View{
             TextField("", text: $text, axis: .vertical)    .background(RoundedRectangle(cornerRadius: 5).fill(Color("Blue5"))).padding().focused($isFocused)
                
             Button(action: {
+                onPost(text)
                 isFocused = false
             }, label: {
                 Image(systemName: "paperplane").foregroundColor(Color("Blue5"))

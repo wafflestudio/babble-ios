@@ -122,7 +122,6 @@ class Network {
         let params:Parameters = ["latitude":latitude,"longitude":longitude,"nickname":nickname]
           
             AF.request(fullURL,method:.post,parameters: params,encoding: JSONEncoding.default,headers: header,interceptor: JWTInterceptor()).responseData{ response in
-                print(response.response?.statusCode)
 
                 switch response.result{
                 case .success(let data):
@@ -171,12 +170,10 @@ class Network {
     func postChat(longitude:String,latitude:String,content:String,id:Int,completion:@escaping (Chat)->(), onError:@escaping(String)->()){
         let fullURL = URL(string:baseURL + "/api/chat/rooms/\(id)/chats")!
         let params = ["content":content,"latitude":latitude,"longitude":longitude]
-        do{
-            var request = try URLRequest(url:fullURL,method:.post)
-
-            request.httpBody = try JSONSerialization.data(withJSONObject: params)
-            AF.request(request).responseData{
+        let header:HTTPHeaders = ["Content-Type":"application/json"]
+        AF.request(fullURL,method:.post,parameters: params,encoder: JSONParameterEncoder.default,headers:header,interceptor:JWTInterceptor()).responseData{
                 response in
+            print(String(decoding: response.data!, as: UTF8.self))
                 switch response.result{
                 case .success(let data):
                     do {
@@ -193,10 +190,7 @@ class Network {
                 }
             }
             
-        }
-        catch{
-            onError("error")
-        }
+        
     }
 
 

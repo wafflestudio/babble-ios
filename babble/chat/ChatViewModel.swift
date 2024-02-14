@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+
+typealias NetworkChat = Chat
 struct ChatDay:Identifiable{
     struct Chat:Identifiable{
         var id: Int
@@ -19,6 +21,25 @@ struct ChatDay:Identifiable{
     var id: Int
     let date:String
     var chats:[Chat]
+    static func addChat(chatDays:[ChatDay],chat:NetworkChat)->[ChatDay]{
+        var result = chatDays
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "y년 M월 d일"
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "a h시 m분"
+        timeFormatter.locale = Locale(identifier: "ko_KR")
+        let date = Date(timeIntervalSince1970: TimeInterval(chat.createdTimeInSec))
+        let day = dayFormatter.string(from: date)
+        let time = timeFormatter.string(from: date)
+        if chatDays.isEmpty || chatDays.last!.date != day{
+            result.append(ChatDay(id: chatDays.count, date: day, chats: [Chat(id: chat.id, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname))]))
+
+        }
+        else{
+            result[result.count - 1].chats.append(Chat(id: chat.id, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname)))
+        }
+        return result
+    }
     static func from(response:ChatsResponse)->[ChatDay]{
         var chatdays:[ChatDay] = []
         let dayFormatter = DateFormatter()
@@ -60,6 +81,7 @@ class ChatViewModel:ObservableObject{
     var chatroom: Room
     @Published
     var chatterCount:Int = 0
+    
     init(chatRoom:Room) {
                
         self.chatroom = chatRoom
@@ -94,6 +116,16 @@ class ChatViewModel:ObservableObject{
             self?.notEntered = false
         } onError:{
             error in
+            
+        }
+    }
+    func postChat(content:String){
+        network.postChat(longitude: "0.0", latitude: "0.0", content: content, id: chatroom.id){ [weak self]
+            response in
+            if let self{
+                chatDays = ChatDay.addChat(chatDays: chatDays, chat: response)
+            }
+        }onError: { error in
             
         }
     }
