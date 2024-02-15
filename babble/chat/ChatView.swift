@@ -12,43 +12,43 @@ import SwiftUI
 
 struct ChatRoomView:View{
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-
+    
     @StateObject
     var viewModel: ChatViewModel
     var body: some View{
-       
-       
-            NavigationView{
-                VStack(spacing: 0.0){
-                    ChatHeaderView(name: viewModel.chatroom.name, tag: viewModel.chatroom.hashTag, members_count:     viewModel.chatterCount){
-                        viewModel.stopPolling()
-                        self.presentationMode.wrappedValue.dismiss()
-                    }
-                    ChatDisplayView(chats:viewModel.chatDays)
-                    
-                        .frame(
-                            minWidth: 0,
-                            maxWidth: .infinity,
-                            minHeight: 0,
-                            maxHeight: .infinity,
-                            alignment: .topLeading
-                        ).padding(EdgeInsets(top: 5.0, leading: 0.0, bottom: 0.0, trailing: 0.0))
-                    WriteView(onPost:{
-                        content in
-                        viewModel.postChat(content: content)
-                    })
-                 /*   NavigationLink("enter chatroom", isActive: $viewModel.notEntered){
-                        RoomEnterView(viewModel: viewModel)                    .navigationBarBackButtonHidden(true)
-                        
-                    }.frame(width: 0,height: 0).hidden()*/
-                    
+        
+        
+        NavigationView{
+            VStack(spacing: 0.0){
+                ChatHeaderView(name: viewModel.chatroom.name, tag: viewModel.chatroom.hashTag, members_count:     viewModel.chatterCount){
+                    viewModel.stopPolling()
+                    self.presentationMode.wrappedValue.dismiss()
                 }
-            }.sheet(isPresented: $viewModel.notEntered, content: {
-                RoomEnterView(viewModel: viewModel) {
-                    viewModel.notEntered = false
-                    presentationMode.wrappedValue.dismiss()
-                } .navigationBarBackButtonHidden(true)
-            })
+                ChatDisplayView(chats:viewModel.chatDays)
+                
+                    .frame(
+                        minWidth: 0,
+                        maxWidth: .infinity,
+                        minHeight: 0,
+                        maxHeight: .infinity,
+                        alignment: .topLeading
+                    ).padding(EdgeInsets(top: 5.0, leading: 0.0, bottom: 0.0, trailing: 0.0))
+                WriteView(onPost:{
+                    content in
+                    viewModel.postChat(content: content)
+                })
+                /*   NavigationLink("enter chatroom", isActive: $viewModel.notEntered){
+                 RoomEnterView(viewModel: viewModel)                    .navigationBarBackButtonHidden(true)
+                 
+                 }.frame(width: 0,height: 0).hidden()*/
+                
+            }
+        }.sheet(isPresented: $viewModel.notEntered, content: {
+            RoomEnterView(viewModel: viewModel) {
+                viewModel.notEntered = false
+                presentationMode.wrappedValue.dismiss()
+            } .navigationBarBackButtonHidden(true)
+        })
         
     }
 }
@@ -60,51 +60,80 @@ struct ChatDisplayView:View{
         ScrollViewReader{value in
             ScrollView{
                 LazyVStack(alignment:.leading,pinnedViews: .sectionHeaders){
-                    ForEach(chats) { dayChat in
-                        Section(header:Text(dayChat.date).font(.system(size:12)).padding(EdgeInsets(top: 5.0, leading: 10.0, bottom: 5.0, trailing: 10.0)).background(Color("Blue4").cornerRadius(5.0)).frame(minWidth: 0,
-                                                                                                                                                                                                              maxWidth: .infinity).background(Color.white)){
-                            ForEach(dayChat.chats) { chat in
-                                ChatView(content: chat.content, time: chat.time, nickname: chat.nickname, color: chat.color).id(chat.id)
-                            }.onChange(of:dayChat.chats.count){
-                                if let lastDay = chats.last{
-                                    if let lastChat = lastDay.chats.last{
-                                        value.scrollTo(lastChat.id)
-                                    }
-                                }
-                          }
-                        }
-                    }
+                    list(value:value)
                 }
             }
         }
     }
+    @ViewBuilder
+    func chatsOfDay(value:ScrollViewProxy,chats:[ChatDay.Chat],isLastDay:Bool)->some View{
+        ForEach(chats) { chat in
+            ChatView(content: chat.content, time: chat.time, nickname: chat.nickname, color: chat.color, isMine: chat.isMine).id(Int(chat.id))        }.onChange(of:chats.count){
+            if isLastDay{
+                if let lastChat = chats.last{
+                    value.scrollTo(Int(lastChat.id))
+                }
+            }
+            
+        }
+    }
+    @ViewBuilder
+    func sectionHeader(text:String)->some View{
+        Text(text)
+            .font(.system(size:12))
+            .padding(EdgeInsets(top: 5.0, leading: 10.0, bottom: 5.0, trailing: 10.0))
+            .background(Color("Blue4").cornerRadius(5.0)).frame(minWidth: 0,maxWidth:.infinity)
+            .background(Color.white)
+    }
+    @ViewBuilder
+    func list(value:ScrollViewProxy)->some View {
+        ForEach(chats) { dayChat in
+            Section(header:sectionHeader(text:dayChat.date)){
+                chatsOfDay(value: value, chats: dayChat.chats,isLastDay:((dayChat.id ) == (chats.last!.id)))
+            }
+        }
+    }
+
 }
 struct ChatView:View{
     var content:String
     var time:String
     var nickname:String
     var color:Color
+    var isMine:Bool
     var body:some View{
-        VStack(alignment: .leading){
-            Text(nickname).font(.system(size:12))
-            HStack(alignment: .bottom){
-                Text(content)
-                
-                    .padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
-                    .background(color)
-                    .cornerRadius(20)
-                Text(time)
-                    .font(.system(size:12))
-                
-            }
-        }.padding()
+            VStack(alignment: isMine ? .trailing : .leading){
+                if !isMine{
+                    Text(nickname).font(.system(size:12))
+                }
+                HStack(alignment: .bottom){
+                    if isMine{
+                        timeView(time: time)
+                        bubble(content: content)
+                    } else{
+                        bubble(content: content)
+                        timeView(time:time)
+                    }
+                    
+                }
+            }.frame(width:UIScreen.main.bounds.width,alignment: isMine ? .trailing : .leading).padding(EdgeInsets(top: 5, leading: isMine ? -10 : 10, bottom: 5, trailing: 0))
+        
+    }
+    func bubble(content:String)->some View{
+        Text(content).padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
+            .background(color)
+            .cornerRadius(20)
+    }
+    func timeView(time:String)->some View{
+        Text(time)
+            .font(.system(size:12))
     }
     
     
 }
 struct WriteView:View{
     var onPost:(String)->()
-
+    
     @State
     var text:String = ""
     @FocusState
@@ -112,7 +141,7 @@ struct WriteView:View{
     var body:some View{
         HStack(alignment:.center){
             TextField("", text: $text, axis: .vertical)    .background(RoundedRectangle(cornerRadius: 5).fill(Color("Blue5"))).padding().focused($isFocused)
-               
+            
             Button(action: {
                 onPost(text)
                 isFocused = false

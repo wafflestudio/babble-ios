@@ -12,7 +12,7 @@ typealias NetworkChat = Chat
 struct ChatDay:Identifiable{
     struct Chat:Identifiable{
         var id: Int
-        
+        var isMine:Bool
         let nickname:String
         let time:String
         let content:String
@@ -32,11 +32,12 @@ struct ChatDay:Identifiable{
         let day = dayFormatter.string(from: date)
         let time = timeFormatter.string(from: date)
         if chatDays.isEmpty || chatDays.last!.date != day{
-            result.append(ChatDay(id: chatDays.count, date: day, chats: [Chat(id: chat.id, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname))]))
+            result.append(ChatDay(id: chatDays.count, date: day, chats: [Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname))]))
+            
 
         }
         else{
-            result[result.count - 1].chats.append(Chat(id: chat.id, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname)))
+            result[result.count - 1].chats.append(Chat(id: chat.id, isMine:chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname)))
         }
         return result
     }
@@ -52,10 +53,10 @@ struct ChatDay:Identifiable{
             let day = dayFormatter.string(from: date)
             let time = timeFormatter.string(from: date)
             if chatdays.isEmpty || chatdays.last!.date != day{
-                chatdays.append(ChatDay(id: chatdays.count, date: day, chats: [Chat(id: chat.id, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname))]))
+                chatdays.append(ChatDay(id: chatdays.count, date: day, chats: [Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname))]))
             }
             else{
-                chatdays[chatdays.count - 1].chats.append(Chat(id: chat.id, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname)))
+                chatdays[chatdays.count - 1].chats.append(Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname)))
             }
             
         }
