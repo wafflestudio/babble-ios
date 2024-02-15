@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.8.1 (swiftlang-5.8.0.124.5 clang-1403.0.22.11.100)
+// swift-compiler-version: Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)
 // swift-module-flags: -target arm64-apple-ios13.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name KakaoMapsSDK
 // swift-module-flags-ignorable: -enable-bare-slash-regex
 import Foundation
@@ -7,6 +7,7 @@ import Foundation
 import Swift
 import _Concurrency
 import _StringProcessing
+import _SwiftConcurrencyShims
 @objc open class TextStyle : ObjectiveC.NSObject {
   @objc public init(fontSize: Swift.UInt = 20, fontColor: UIKit.UIColor = UIColor.black, strokeThickness: Swift.UInt = 2, strokeColor: UIKit.UIColor = UIColor.white, font: Swift.String = "", charSpace: Swift.Int = 0, lineSpace: Swift.Float = 1.0, aspectRatio: Swift.Float = 1.0)
   @objc convenience public init(fontSize: Swift.UInt, fontColor: UIKit.UIColor)
@@ -685,6 +686,10 @@ extension KakaoMapsSDK.KakaoMap {
     @objc get
     @objc set
   }
+  @objc public var positionOffset: CoreFoundation.CGPoint {
+    @objc get
+    @objc set
+  }
   @objc public var position: KakaoMapsSDK.MapPoint? {
     @objc get
     @objc set
@@ -692,6 +697,7 @@ extension KakaoMapsSDK.KakaoMap {
   @objc public func showWithAutoMove(callback: (() -> Swift.Void)? = nil)
   @objc override public func getChild(_ componentId: Swift.String) -> KakaoMapsSDK.GuiComponentBase?
   @objc public func moveAt(_ position: KakaoMapsSDK.MapPoint, duration: Swift.UInt)
+  @objc public func rawPosition() -> KakaoMapsSDK.MapPoint?
   @objc deinit
 }
 extension KakaoMapsSDK.KakaoMap {
@@ -719,6 +725,9 @@ extension KakaoMapsSDK.KakaoMap {
     @objc set
   }
   @objc deinit
+}
+extension KakaoMapsSDK.RoadviewInfo {
+  @objc convenience dynamic public init(viewName: Swift.String, viewInfoName: Swift.String = "roadview", enabled: Swift.Bool = true)
 }
 @objc @_hasMissingDesignatedInitializers open class LodPoi : ObjectiveC.NSObject, KakaoMapsSDK.Label {
   @objc deinit
@@ -1088,7 +1097,6 @@ extension KakaoMapsSDK.KakaoMap {
   @objc deinit
 }
 @objc @_hasMissingDesignatedInitializers public class RoadviewInfo : KakaoMapsSDK.ViewInfo {
-  @objc public init(viewName: Swift.String, viewInfoName: Swift.String = "roadview", enabled: Swift.Bool = true, dev: Swift.Bool = false)
   @objc deinit
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers open class MapCoordConverter : ObjectiveC.NSObject {

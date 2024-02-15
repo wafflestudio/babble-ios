@@ -21,6 +21,8 @@
 		4EB153082B77FDDD007D1E4C /* KakaoMapVCWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB153072B77FDDD007D1E4C /* KakaoMapVCWrapper.swift */; };
 		4EB4E6582B7B481C008408FD /* JWTInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4E6572B7B481C008408FD /* JWTInterceptor.swift */; };
 		4EB4E65A2B7B4E70008408FD /* ChatroomsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4E6592B7B4E70008408FD /* ChatroomsViewModel.swift */; };
+		4EF037FF2B7B9DC600063429 /* APISampleBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF037FD2B7B9DC600063429 /* APISampleBaseViewController.swift */; };
+		4EF038002B7B9DC600063429 /* CurrentPositionPOI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF037FE2B7B9DC600063429 /* CurrentPositionPOI.swift */; };
 		7C61B4699D00E9E86428E59B /* Pods_babble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC562E765346CA4D3256DECC /* Pods_babble.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +66,8 @@
 		4EB153072B77FDDD007D1E4C /* KakaoMapVCWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoMapVCWrapper.swift; sourceTree = "<group>"; };
 		4EB4E6572B7B481C008408FD /* JWTInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTInterceptor.swift; sourceTree = "<group>"; };
 		4EB4E6592B7B4E70008408FD /* ChatroomsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatroomsViewModel.swift; sourceTree = "<group>"; };
+		4EF037FD2B7B9DC600063429 /* APISampleBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APISampleBaseViewController.swift; sourceTree = "<group>"; };
+		4EF037FE2B7B9DC600063429 /* CurrentPositionPOI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentPositionPOI.swift; sourceTree = "<group>"; };
 		BC562E765346CA4D3256DECC /* Pods_babble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_babble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -126,6 +130,8 @@
 		4E6A0FFF2B750B7D00DDF754 /* babble */ = {
 			isa = PBXGroup;
 			children = (
+				4EF037FD2B7B9DC600063429 /* APISampleBaseViewController.swift */,
+				4EF037FE2B7B9DC600063429 /* CurrentPositionPOI.swift */,
 				4EA56B7D2B761A2B00F445F9 /* Info.plist */,
 				4E6A10002B750B7E00DDF754 /* babbleApp.swift */,
 				4EB153052B774F13007D1E4C /* ContentView.swift */,
@@ -372,8 +378,10 @@
 			files = (
 				4E6A10032B750B7E00DDF754 /* MapView.swift in Sources */,
 				4E6A10012B750B7E00DDF754 /* babbleApp.swift in Sources */,
+				4EF038002B7B9DC600063429 /* CurrentPositionPOI.swift in Sources */,
 				4EB153042B77491A007D1E4C /* LoginView.swift in Sources */,
 				4EB4E6582B7B481C008408FD /* JWTInterceptor.swift in Sources */,
+				4EF037FF2B7B9DC600063429 /* APISampleBaseViewController.swift in Sources */,
 				4EA199C42B79FA9F008DD889 /* KakaoMapVC.swift in Sources */,
 				4EB4E65A2B7B4E70008408FD /* ChatroomsViewModel.swift in Sources */,
 				4EB153082B77FDDD007D1E4C /* KakaoMapVCWrapper.swift in Sources */,
