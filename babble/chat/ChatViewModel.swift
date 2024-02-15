@@ -63,10 +63,11 @@ struct ChatDay:Identifiable{
         return chatdays
     }
     static func colorFromNickname(_ nickname:String)->Color{
-        let hash = nickname.hashValue
-        let blue = min(hash % 256,200)
-        let green = min(hash / 256 % 256,200)
-        let red = min(hash / 256 / 256 % 256,200)
+        let hash = abs(nickname.hashValue)
+        let MAX_RGBVALUE = 200
+        let blue = min(hash % 256,MAX_RGBVALUE)
+        let green = min(hash / 256 % 256,MAX_RGBVALUE)
+        let red = min(hash / 256 / 256 % 256,MAX_RGBVALUE)
         let color = Color(red: Double(red)/255.0, green: Double(green)/255.0, blue: Double(blue)/255.0)
         return color
     }
