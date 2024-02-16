@@ -24,7 +24,7 @@ struct ChatRoomView:View{
                     viewModel.stopPolling()
                     self.presentationMode.wrappedValue.dismiss()
                 }
-                ChatDisplayView(chats:viewModel.chatDays)
+                ChatDisplayView(chats:viewModel.chatDays, viewModel: viewModel)
                 
                     .frame(
                         minWidth: 0,
@@ -36,7 +36,7 @@ struct ChatRoomView:View{
                 WriteView(onPost:{
                     content in
                     viewModel.postChat(content: content)
-                })
+                }, parent:$viewModel.writingParentChat)
                 /*   NavigationLink("enter chatroom", isActive: $viewModel.notEntered){
                  RoomEnterView(viewModel: viewModel)                    .navigationBarBackButtonHidden(true)
                  
@@ -48,7 +48,10 @@ struct ChatRoomView:View{
                 viewModel.notEntered = false
                 presentationMode.wrappedValue.dismiss()
             } .navigationBarBackButtonHidden(true)
+                .interactiveDismissDisabled()
         })
+     
+        
         
     }
 }
@@ -56,6 +59,7 @@ struct ChatRoomView:View{
 
 struct ChatDisplayView:View{
     let chats:[ChatDay]
+    var viewModel:ChatViewModel
     var body:some View{
         ScrollViewReader{value in
             ScrollView{
@@ -68,7 +72,26 @@ struct ChatDisplayView:View{
     @ViewBuilder
     func chatsOfDay(value:ScrollViewProxy,chats:[ChatDay.Chat],isLastDay:Bool)->some View{
         ForEach(chats) { chat in
-            ChatView(content: chat.content, time: chat.time, nickname: chat.nickname, color: chat.color, isMine: chat.isMine).id(Int(chat.id))        }.onChange(of:chats.count){
+           ChatView(content: chat.content, time: chat.time, nickname: chat.nickname, color: chat.color, isMine: chat.isMine,parentId: chat.parentId,parentContent: chat.parentContent).id(Int(chat.id))
+                    .onTapGesture {
+                        if let parentId = chat.parentId{
+                            value.scrollTo(parentId)
+                        }
+                    }.contextMenu(ContextMenu(menuItems: {
+                Button(action: {
+                    viewModel.writingParentChat = chat
+                }, label: {
+                    Text("답장")
+                })
+                
+                
+            }))
+                   
+            
+                
+        }
+      
+        .onChange(of:chats.count){
             if isLastDay{
                 if let lastChat = chats.last{
                     value.scrollTo(Int(lastChat.id))
@@ -101,6 +124,8 @@ struct ChatView:View{
     var nickname:String
     var color:Color
     var isMine:Bool
+    var parentId:Int?
+    var parentContent:String?
     var body:some View{
             VStack(alignment: isMine ? .trailing : .leading){
                 if !isMine{
@@ -109,20 +134,32 @@ struct ChatView:View{
                 HStack(alignment: .bottom){
                     if isMine{
                         timeView(time: time)
-                        bubble(content: content)
+                        bubble(parentContent:parentContent,content: content)
                     } else{
-                        bubble(content: content)
+                        bubble(parentContent:parentContent,content: content)
                         timeView(time:time)
                     }
                     
                 }
             }.frame(width:UIScreen.main.bounds.width,alignment: isMine ? .trailing : .leading).padding(EdgeInsets(top: 5, leading: isMine ? -10 : 10, bottom: 5, trailing: 0))
+            
         
     }
-    func bubble(content:String)->some View{
-        Text(content).padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
-            .background(color)
-            .cornerRadius(20)
+    func bubble(parentContent:String?,content:String)->some View{
+        VStack(alignment: .leading){
+                if let parentContent{
+                    Text(parentContent).font(.system(size: 12))
+                }
+                Text(content)
+            }.padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
+                .background(color.clipShape(RoundedRectangle(cornerRadius: 20)))
+               
+        
+      /*  else{
+            Text(content).padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
+                .background(color)
+                .cornerRadius(20)
+        }*/
     }
     func timeView(time:String)->some View{
         Text(time)
@@ -134,20 +171,35 @@ struct ChatView:View{
 struct WriteView:View{
     var onPost:(String)->()
     
+    @Binding
+    var parent:ChatDay.Chat?
     @State
     var text:String = ""
     @FocusState
-    private var isFocused:Bool
+     var isFocused:Bool
     var body:some View{
-        HStack(alignment:.center){
-            TextField("", text: $text, axis: .vertical)    .background(RoundedRectangle(cornerRadius: 5).fill(Color("Blue5"))).padding().focused($isFocused)
-            
-            Button(action: {
-                onPost(text)
-                isFocused = false
-            }, label: {
-                Image(systemName: "paperplane").foregroundColor(Color("Blue5"))
-            }).padding(EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 20.0))
+        VStack{
+            if let curParent = parent{
+                HStack{
+                    Text(curParent.content)
+                    Spacer()
+                    Button(action: {
+                        parent = nil
+                    }, label: {
+                        Text("x")
+                    })
+                }
+            }
+            HStack(alignment:.center){
+                TextField("", text: $text, axis: .vertical)    .background(RoundedRectangle(cornerRadius: 5).fill(Color("Blue5"))).padding().focused($isFocused)
+                
+                Button(action: {
+                    onPost(text)
+                    isFocused = false
+                }, label: {
+                    Image(systemName: "paperplane").foregroundColor(Color("Blue5"))
+                }).padding(EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 20.0))
+            }
         }.background(Color("Blue4"))
     }
 }

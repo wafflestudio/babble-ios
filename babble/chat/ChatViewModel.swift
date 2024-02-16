@@ -17,6 +17,8 @@ struct ChatDay:Identifiable{
         let time:String
         let content:String
         let color:Color
+        let parentId:Int?
+        let parentContent:String?
     }
     var id: Int
     let date:String
@@ -32,12 +34,12 @@ struct ChatDay:Identifiable{
         let day = dayFormatter.string(from: date)
         let time = timeFormatter.string(from: date)
         if chatDays.isEmpty || chatDays.last!.date != day{
-            result.append(ChatDay(id: chatDays.count, date: day, chats: [Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname))]))
+            result.append(ChatDay(id: chatDays.count, date: day, chats: [Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname),parentId: chat.parent?.chatterId,parentContent: chat.parent?.content)]))
             
 
         }
         else{
-            result[result.count - 1].chats.append(Chat(id: chat.id, isMine:chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname)))
+            result[result.count - 1].chats.append(Chat(id: chat.id, isMine:chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname),parentId: chat.parent?.chatterId,parentContent: chat.parent?.content))
         }
         return result
     }
@@ -53,10 +55,10 @@ struct ChatDay:Identifiable{
             let day = dayFormatter.string(from: date)
             let time = timeFormatter.string(from: date)
             if chatdays.isEmpty || chatdays.last!.date != day{
-                chatdays.append(ChatDay(id: chatdays.count, date: day, chats: [Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname))]))
+                chatdays.append(ChatDay(id: chatdays.count, date: day, chats: [Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname),parentId: chat.parent?.chatterId,parentContent: chat.parent?.content)]))
             }
             else{
-                chatdays[chatdays.count - 1].chats.append(Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname)))
+                chatdays[chatdays.count - 1].chats.append(Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname),parentId: chat.parent?.chatterId,parentContent: chat.parent?.content))
             }
             
         }
@@ -83,7 +85,8 @@ class ChatViewModel:ObservableObject{
     var chatroom: Room
     @Published
     var chatterCount:Int = 0
-    
+    @Published
+    var writingParentChat: ChatDay.Chat?
     init(chatRoom:Room) {
                
         self.chatroom = chatRoom
@@ -122,7 +125,7 @@ class ChatViewModel:ObservableObject{
         }
     }
     func postChat(content:String){
-        network.postChat(longitude: "0.0", latitude: "0.0", content: content, id: chatroom.id){ [weak self]
+        network.postChat(longitude: "0.0", latitude: "0.0", content: content, roomId: chatroom.id,parentId: writingParentChat?.id){ [weak self]
             response in
             if let self{
                 chatDays = ChatDay.addChat(chatDays: chatDays, chat: response)

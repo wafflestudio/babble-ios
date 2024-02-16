@@ -167,9 +167,10 @@ class Network {
         }
 
     }
-    func postChat(longitude:String,latitude:String,content:String,id:Int,completion:@escaping (Chat)->(), onError:@escaping(String)->()){
-        let fullURL = URL(string:baseURL + "/api/chat/rooms/\(id)/chats")!
-        let params = ["content":content,"latitude":latitude,"longitude":longitude]
+    func postChat(longitude:String,latitude:String,content:String,roomId:Int,parentId:Int?,completion:@escaping (Chat)->(), onError:@escaping(String)->()){
+        let fullURL = URL(string:baseURL + "/api/chat/rooms/\(roomId)/chats")!
+        let params = parentId == nil ? ["content":content,"latitude":latitude,"longitude":longitude] :
+        ["content":content,"latitude":latitude,"longitude":longitude,"parentChatId":"\(parentId!)"]
         let header:HTTPHeaders = ["Content-Type":"application/json"]
         AF.request(fullURL,method:.post,parameters: params,encoder: JSONParameterEncoder.default,headers:header,interceptor:JWTInterceptor()).responseData{
                 response in
@@ -216,7 +217,7 @@ struct Room: Codable, Identifiable {
     let longitude: Double
     let name: String
 }
-struct Chat: Codable{
+struct ParentChat:Codable{
     let chatterId: Int
     let chatterNickname: String
     let content: String
@@ -224,3 +225,13 @@ struct Chat: Codable{
     let isMine:Bool
     let createdTimeInSec: Int
 }
+struct Chat: Codable{
+    let chatterId: Int
+    let chatterNickname: String
+    let content: String
+    let id:Int
+    let isMine:Bool
+    let createdTimeInSec: Int
+    let parent: ParentChat?
+}
+
