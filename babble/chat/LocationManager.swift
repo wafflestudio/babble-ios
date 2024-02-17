@@ -36,4 +36,8 @@ class LocationManager:NSObject, ObservableObject,CLLocationManagerDelegate{
         longitude = locations[0].coordinate.longitude
          print(latitude)
     }
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        latitude = -1000.0
+        longitude = -1000.0
+    }
 }
