@@ -199,10 +199,12 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         let poiOption = PoiOptions(styleID: "positionPoiStyle", poiID: "PositionPOI")
         poiOption.rank = 3
         poiOption.transformType = .decal    //화면이 기울여졌을 때, 지도를 따라 기울어져서 그려지도록 한다.
+        poiOption.clickable = true
         //let position: MapPoint = MapPoint(longitude: 127.108678, latitude: 37.402001)
         let position: MapPoint = MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude)
         
         _currentPositionPoi = positionLayer?.addPoi(option:poiOption, at: position)
+        let _ = _currentPositionPoi?.addPoiTappedEventHandler(target: self, handler: KakaoMapVC.clickedMyLocation)
         
         // 현위치마커의 방향표시 화살표에 해당하는 POI
         let poiOption2 = PoiOptions(styleID: "directionArrowPoiStyle", poiID: "DirectionArrowPOI")
@@ -221,6 +223,18 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         _currentPositionPoi?.shareTransformWithPoi(_currentDirectionArrowPoi!)  //몸통이 방향표시와 위치 및 방향을 공유하도록 지정한다. 몸통 POI의 위치가 변경되면 방향표시 POI의 위치도 변경된다. 반대는 변경안됨.
         _currentDirectionArrowPoi?.shareTransformWithPoi(_currentDirectionPoi!) //방향표시가 부채꼴모양과 위치 및 방향을 공유하도록 지정한다.
     }
+    
+    func clickedMyLocation(_ param: PoiInteractionEventParam) {
+        viewmodel?.latitude = _currentPosition.latitude
+        viewmodel?.longitude = _currentPosition.longitude
+        let swiftUIView = MakeRoomView(viewModel: viewmodel!)
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        self.navigationController?.pushViewController(hostingController, animated: true)
+
+        print(param.poiItem.itemID)
+        
+    }
+
     
     func createLayer() {
         let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
