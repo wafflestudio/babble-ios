@@ -61,10 +61,10 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
+        
         mapContainer = KMViewContainer(frame: self.view.bounds)
         self.view.addSubview(mapContainer!)
-
+        
         //KMController 생성.
         mapController = KMController(viewContainer: mapContainer!)
         mapController!.delegate = self
@@ -72,7 +72,15 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         _timer = Timer.init(timeInterval: 0.3, target: self, selector: #selector(self.updateCurrentPositionPOI), userInfo: nil, repeats: true)
         RunLoop.current.add(_timer!, forMode: RunLoop.Mode.common)
         startUpdateLocation()
-        mapController?.initEngine()    }
+        mapController?.initEngine()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        _appear = false
+        mapController?.stopRendering()  //렌더링 중지.
+        _timer?.invalidate()
+    }
+
     
     func setupLocationDependentFeatures() {
         _currentPositionPoi?.show()
