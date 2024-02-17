@@ -12,10 +12,11 @@ class ChatRoomsViewModel: ObservableObject {
     let network = Network()
     @Published var rooms: [Room] = []
 
-    func fetchChatRooms(longitude: String, latitude: String) {
+    func fetchChatRooms(longitude: Double, latitude: Double, completion: @escaping () -> Void) {
         network.loadChatrooms(longitude: longitude, latitude: latitude) { rooms in
             DispatchQueue.main.async {
                 self.rooms = rooms
+                completion()
             }
         }
     }

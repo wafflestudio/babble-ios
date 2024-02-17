@@ -9,16 +9,18 @@ import SwiftUI
 
 struct MapView: View {
     @State var draw: Bool = false
+    var chatRoomsViewModel: ChatRoomsViewModel
     
     var body: some View {
         VStack {
-            KakaoMapVCWrapper()
+            KakaoMapVCWrapper(chatRoomsViewModel: chatRoomsViewModel)
         }
     }
 }
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {
-        MapView()
+        var chatRoomsViewModel = ChatRoomsViewModel()
+        MapView(chatRoomsViewModel: chatRoomsViewModel)
     }
 }

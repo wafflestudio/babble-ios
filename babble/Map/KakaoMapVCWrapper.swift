@@ -10,8 +10,12 @@ import SwiftUI
 import UIKit
 
 struct KakaoMapVCWrapper : UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> some UIViewController {  
-        return CurrentPositionPOI()
+    var chatRoomsViewModel: ChatRoomsViewModel
+    
+    func makeUIViewController(context: Context) -> some UIViewController {
+        let kakaomapVC = KakaoMapVC()
+        kakaomapVC.viewmodel = chatRoomsViewModel // Pass the ViewModel to the UIViewController
+        return kakaomapVC
     }
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {

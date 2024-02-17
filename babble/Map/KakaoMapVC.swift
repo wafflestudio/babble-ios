@@ -17,7 +17,9 @@ enum Mode: Int {
     tracking
 }
 
-class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocationManagerDelegate {
+class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CLLocationManagerDelegate {
+    var viewmodel: ChatRoomsViewModel?
+    
     override init() {
         _locationServiceAuthorized = CLAuthorizationStatus.notDetermined
         _locationManager = CLLocationManager()
@@ -76,6 +78,9 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
         _currentDirectionArrowPoi?.show()
         _moveOnce = true
         createPolygonShape()
+        viewmodel?.fetchChatRooms(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude) {
+            self.createSharedLocationPois()
+        }
     }
     
     override func addViews() {
@@ -91,6 +96,8 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
             createLabelLayer()
             createPoiStyle()
             createPois()
+            createLayer()
+            createSharedLocationStyle()
         }
     }
     
@@ -205,6 +212,62 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
         _currentPositionPoi?.shareTransformWithPoi(_currentDirectionArrowPoi!)  //몸통이 방향표시와 위치 및 방향을 공유하도록 지정한다. 몸통 POI의 위치가 변경되면 방향표시 POI의 위치도 변경된다. 반대는 변경안됨.
         _currentDirectionArrowPoi?.shareTransformWithPoi(_currentDirectionPoi!) //방향표시가 부채꼴모양과 위치 및 방향을 공유하도록 지정한다.
     }
+    
+    func createLayer() {
+        let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
+        let manager = mapView.getLabelManager()
+        // zOrder값을 조절해서 CurrentPositionMarker를 구성하는 location poi, direction area, direction poi와의 렌더링 순서를 조절한다.
+        let option = LabelLayerOptions(layerID: "chatroomPOILayer", competitionType: .none, competitionUnit: .symbolFirst, orderType: .rank, zOrder: 1501)
+        let _ = manager.addLabelLayer(option: option)
+    }
+    
+    func createSharedLocationStyle() {
+        let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
+        let manager = mapView.getLabelManager()
+                
+        let marker = PoiIconStyle(symbol: UIImage(systemName: "message.fill"))
+        let perLevelStyle1 = PerLevelPoiStyle(iconStyle: marker, level: 0)
+        let poiStyle1 = PoiStyle(styleID: "chatroomStyle", styles: [perLevelStyle1])
+        manager.addPoiStyle(poiStyle1)
+    }
+
+    
+    func createSharedLocationPois() {
+        let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
+        let manager = mapView.getLabelManager()
+        let layer = manager.getLabelLayer(layerID: "chatroomPOILayer")
+
+        /*var points = [
+            MapPoint(longitude: 127.040707, latitude: 37.500383),
+            MapPoint(longitude: 127.035393, latitude: 37.501440),
+            MapPoint(longitude: 127.035082, latitude: 37.505012),
+            MapPoint(longitude: 127.040038, latitude: 37.503435),
+            MapPoint(longitude: 127.036693, latitude: 37.501240),
+            MapPoint(longitude: 127.042944, latitude: 37.505231),
+            MapPoint(longitude: 127.041496, latitude: 37.499066),
+            MapPoint(longitude: 127.039881, latitude: 37.502589),
+            MapPoint(longitude: 127.040264, latitude: 37.500471),
+            MapPoint(longitude: 127.037507, latitude: 37.499449)
+        ]*/
+        
+        if let rooms = viewmodel?.rooms {
+            for room in rooms {
+                let point = MapPoint(longitude: room.longitude, latitude: room.latitude)
+                let poiOptions = PoiOptions(styleID: "chatroomStyle", poiID: "\(room.id)")
+                poiOptions.clickable = true
+                if let poi = layer?.addPoi(option: poiOptions, at: point) {
+                    let _ = poi.addPoiTappedEventHandler(target: self, handler: KakaoMapVC.clickedChatroom)
+                    poi.show()
+                }
+            }
+        }
+    }
+    
+    func clickedChatroom(_ param: PoiInteractionEventParam) {
+      print(param.poiItem.itemID)
+    }
+
+
     
     // 현위치마커 버튼 GUI
     func createSpriteGUI() {
@@ -323,7 +386,7 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         _currentPosition.longitude = locations[0].coordinate.longitude
         _currentPosition.latitude = locations[0].coordinate.latitude
-
+        
 //        let mapView: KakaoMap? = mapController?.getView("mapview") as? KakaoMap
 //        let manager = mapView?.getMapMovablePoiManager()
 //        let poi = manager?.getMovablePoi("me")

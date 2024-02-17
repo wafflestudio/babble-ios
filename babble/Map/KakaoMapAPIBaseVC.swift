@@ -9,7 +9,7 @@
 import UIKit
 import KakaoMapsSDK
 
-class APISampleBaseViewController: UIViewController, MapControllerDelegate {
+class KakaoMapAPIBaseVC: UIViewController, MapControllerDelegate {
     
     init() {
         _observerAdded = false

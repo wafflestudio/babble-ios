@@ -15,32 +15,18 @@ struct ContentView: View {
     @StateObject var viewModel = ChatRoomsViewModel()
 
     var body: some View {
-        //if isLoggedIn {
-            //VStack {
-                MapView()
-                /*NavigationView {
-                    List(viewModel.rooms) { room in
-                        VStack(alignment: .leading) {
-                            Text(room.name)
-                                .font(.headline)
-                            Text("#\(room.hashTag)")
-                                .font(.subheadline)
-                        }
-                    }
-                    .navigationTitle("Chat Rooms")
-                    .onAppear {
-                        viewModel.fetchChatRooms(longitude: "0.0", latitude: "0.0")
-                    }
-                }*/
-            //}
+        if isLoggedIn {
+            VStack {
+                MapView(chatRoomsViewModel: viewModel)
+            }
 
-        /*} else {
+        } else {
            LoginView(isLoggedIn: $isLoggedIn)
                 .onOpenURL { url in
                                 if (AuthApi.isKakaoTalkLoginUrl(url)) {
                                     _ = AuthController.handleOpenUrl(url: url)
                                 }
                             }
-        }*/
+        }
     }
 }
