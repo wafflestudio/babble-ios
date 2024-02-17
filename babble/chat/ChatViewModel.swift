@@ -129,7 +129,6 @@ class ChatViewModel:ObservableObject{
             self?.notEntered = false
         } onError:{[weak self]
             error in
-            self?.outOfLocation = true
         }
     }
     func postChat(content:String){
@@ -139,7 +138,6 @@ class ChatViewModel:ObservableObject{
                 chatDays = ChatDay.addChat(chatDays: chatDays, chat: response)
             }
         }onError: {[weak self] error in
-            self?.outOfLocation = true
 
         }
     }
