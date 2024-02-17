@@ -15,6 +15,7 @@ class JWTInterceptor:RequestInterceptor{
         
         if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
             urlRequest.headers.add(name: "Authorization", value: "Bearer " + accessToken)
+            print(accessToken)
         }
         else {
             urlRequest.headers.add(name: "Authorization", value: "")

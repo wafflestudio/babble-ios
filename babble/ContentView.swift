@@ -17,24 +17,7 @@ struct ContentView: View {
     var body: some View {
         if isLoggedIn {
             VStack {
-                NavigationView {
-                    List(viewModel.rooms) { room in
-                        NavigationLink(destination:ChatRoomView(viewModel: ChatViewModel(chatRoom: room))                    .navigationBarBackButtonHidden(true)){
-                            VStack(alignment: .leading) {
-                                Text(room.name)
-                                    .font(.headline)
-                                Text("#\(room.hashTag)")
-                                    .font(.subheadline)
-                            }
-                        }
-                    }
-                    .navigationTitle("Chat Rooms")
-
-                    .onAppear {
-                        viewModel.fetchChatRooms(longitude: "0.0", latitude: "0.0")
-                    }
-                    
-                }
+                MapView(chatRoomsViewModel: viewModel)
             }
 
         } else {

@@ -92,7 +92,7 @@ class Network {
         }
     }
     
-    func loadChatrooms(longitude: String, latitude: String, completion: @escaping ([Room]) -> Void) {
+    func loadChatrooms(longitude: Double, latitude: Double, completion: @escaping ([Room]) -> Void) {
         let fullURL = URL(string: baseURL + "/api/chat/rooms?latitude=\(latitude)&longitude=\(longitude)")
 
         AF.request(fullURL!,
