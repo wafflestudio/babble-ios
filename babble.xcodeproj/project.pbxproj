@@ -14,7 +14,6 @@
 		4E6A10132B750B7E00DDF754 /* babbleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6A10122B750B7E00DDF754 /* babbleTests.swift */; };
 		4E6A101D2B750B7E00DDF754 /* babbleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6A101C2B750B7E00DDF754 /* babbleUITests.swift */; };
 		4E6A101F2B750B7E00DDF754 /* babbleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6A101E2B750B7E00DDF754 /* babbleUITestsLaunchTests.swift */; };
-		4EA199C42B79FA9F008DD889 /* KakaoMapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA199C32B79FA9F008DD889 /* KakaoMapVC.swift */; };
 		4EB153022B774739007D1E4C /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB153012B774739007D1E4C /* Network.swift */; };
 		4EB153042B77491A007D1E4C /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB153032B77491A007D1E4C /* LoginView.swift */; };
 		4EB153062B774F13007D1E4C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB153052B774F13007D1E4C /* ContentView.swift */; };
@@ -57,7 +56,6 @@
 		4E6A10182B750B7E00DDF754 /* babbleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = babbleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E6A101C2B750B7E00DDF754 /* babbleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = babbleUITests.swift; sourceTree = "<group>"; };
 		4E6A101E2B750B7E00DDF754 /* babbleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = babbleUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		4EA199C32B79FA9F008DD889 /* KakaoMapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoMapVC.swift; sourceTree = "<group>"; };
 		4EA56B7D2B761A2B00F445F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4EB153002B773A18007D1E4C /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		4EB153012B774739007D1E4C /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
@@ -142,7 +140,6 @@
 				4EB153002B773A18007D1E4C /* Secrets.xcconfig */,
 				4E6A10022B750B7E00DDF754 /* MapView.swift */,
 				4EB153072B77FDDD007D1E4C /* KakaoMapVCWrapper.swift */,
-				4EA199C32B79FA9F008DD889 /* KakaoMapVC.swift */,
 				4E6A10042B750B7E00DDF754 /* Assets.xcassets */,
 				4E6A10062B750B7E00DDF754 /* babble.entitlements */,
 				4E6A10072B750B7E00DDF754 /* Preview Content */,
@@ -382,7 +379,6 @@
 				4EB153042B77491A007D1E4C /* LoginView.swift in Sources */,
 				4EB4E6582B7B481C008408FD /* JWTInterceptor.swift in Sources */,
 				4EF037FF2B7B9DC600063429 /* APISampleBaseViewController.swift in Sources */,
-				4EA199C42B79FA9F008DD889 /* KakaoMapVC.swift in Sources */,
 				4EB4E65A2B7B4E70008408FD /* ChatroomsViewModel.swift in Sources */,
 				4EB153082B77FDDD007D1E4C /* KakaoMapVCWrapper.swift in Sources */,
 				4EB153022B774739007D1E4C /* Network.swift in Sources */,

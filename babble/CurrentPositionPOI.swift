@@ -6,6 +6,7 @@
 //  Copyright © 2020 kakao. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import CoreLocation
 import KakaoMapsSDK
@@ -16,7 +17,6 @@ enum Mode: Int {
     tracking
 }
 
-// POI의 기능을 조합하여 현위치마커를 구성하는 예제.
 class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocationManagerDelegate {
     override init() {
         _locationServiceAuthorized = CLAuthorizationStatus.notDetermined
@@ -63,7 +63,7 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
         self.view.addSubview(mapContainer!)
 
         //KMController 생성.
-        mapController = KMController(viewContainer: mapContainer!)!
+        mapController = KMController(viewContainer: mapContainer!)
         mapController!.delegate = self
         
         _timer = Timer.init(timeInterval: 0.3, target: self, selector: #selector(self.updateCurrentPositionPOI), userInfo: nil, repeats: true)
@@ -75,6 +75,7 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
         _currentPositionPoi?.show()
         _currentDirectionArrowPoi?.show()
         _moveOnce = true
+        createPolygonShape()
     }
     
     override func addViews() {
@@ -84,12 +85,62 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
         
         if mapController?.addView(mapviewInfo) == Result.OK {
             print("OK")
+            createShapeLayer()
+            createPolygonStyleSet()
             createSpriteGUI()
             createLabelLayer()
             createPoiStyle()
             createPois()
         }
     }
+    
+    
+    // PolygonShape를 추가하기 위해 ShapeLayer를 생성한다.
+    func createShapeLayer() {
+        let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
+        let manager = mapView.getShapeManager()
+        let _ = manager.addShapeLayer(layerID: "polygons", zOrder: 10001)
+    }
+    
+    // PolygonShape에서 사용할 스타일셋을 만든다.
+    func createPolygonStyleSet() {
+        let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
+        let manager = mapView.getShapeManager()
+        
+        let fillColor = UIColor(hex: 0x80A6F288) // Example fill color
+        let strokeColor = UIColor(hex: 0x0C2FF2FF) // Example stroke color
+
+        let styleSet = PolygonStyleSet(styleSetID: "polygonStyleSet")
+        let perLevelStyle = PerLevelPolygonStyle(color: fillColor, strokeWidth: 3, strokeColor: strokeColor, level: 0)
+        let style = PolygonStyle(styles: [perLevelStyle])
+            
+        styleSet.addStyle(style)
+
+        manager.addPolygonStyleSet(styleSet)
+    }
+    
+    // 하나의 원으로 구성된 PolygonShape를 만든다.
+    func createPolygonShape() {
+        let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
+        let manager = mapView.getShapeManager()
+        let layer = manager.getShapeLayer(layerID: "polygons")
+        let center = MapPoint(longitude: 127.038575, latitude: 37.499699)
+        //let center = MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude)
+        
+        _polygons = [MapPolygon]()
+        _polygons?.append(MapPolygon(exteriorRing: Primitives.getCirclePoints(radius: 500, numPoints: 90, cw: true, center: center), hole: nil, styleIndex: 0))
+        
+        let option = MapPolygonShapeOptions(shapeID: "polygonShape", styleID: "polygonStyleSet", zOrder: 0)
+        option.polygons = _polygons!
+        
+        let shape = layer?.addMapPolygonShape(option) { (polygon: MapPolygonShape?) -> Void in
+            polygon?.show()
+            //mapView.moveCamera(CameraUpdate.make(target: center, zoomLevel: 15, mapView: mapView))
+        }
+        
+        _currentDirectionPoi?.shareTransformWithShape(shape!)
+    }
+
     
     func createLabelLayer() {
         let view = mapController?.getView("mapview") as! KakaoMap
@@ -221,7 +272,7 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
     @objc func updateCurrentPositionPOI() {
         _currentPositionPoi?.moveAt(MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), duration: 150)
         _currentDirectionArrowPoi?.rotateAt(_currentHeading, duration: 150)
-        
+                
         if _moveOnce {
             let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
             mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), mapView: mapView))
@@ -297,4 +348,19 @@ class CurrentPositionPOI: APISampleBaseViewController, GuiEventDelegate, CLLocat
     var _locationManager: CLLocationManager
     var _locationServiceAuthorized: CLAuthorizationStatus
     var onAuthorizationGiven: (() -> Void)?
+    var _polygons: [MapPolygon]?
+    var _shapeLayer: ShapeLayer?
+    var _shape: MapPolygonShape?
+}
+
+extension UIColor {
+    public convenience init(hex: UInt32) {
+        let r, g, b, a: CGFloat
+        r = CGFloat((hex & 0xff000000) >> 24) / 255.0
+        g = CGFloat((hex & 0x00ff0000) >> 16) / 255.0
+        b = CGFloat((hex & 0x0000ff00) >> 8) / 255.0
+        a = CGFloat((hex & 0x000000ff)) / 255.0
+        
+        self.init(red: r, green: g, blue: b, alpha: a)
+    }
 }
