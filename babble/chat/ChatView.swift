@@ -43,13 +43,7 @@ struct ChatRoomView:View{
                  }.frame(width: 0,height: 0).hidden()*/
                 
             }
-        }.sheet(isPresented: $viewModel.notEntered, content: {
-            RoomEnterView(viewModel: viewModel) {
-                viewModel.notEntered = false
-                presentationMode.wrappedValue.dismiss()
-            } .navigationBarBackButtonHidden(true)
-                .interactiveDismissDisabled()
-        })
+        }
         .alert("채팅방 위치에서 벗어났습니다.",isPresented: $viewModel.outOfLocation){
             Button("OK"){
                 viewModel.stopPolling()

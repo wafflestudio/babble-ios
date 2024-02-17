@@ -229,6 +229,7 @@ struct EnterChatRoomResponse:Codable{
     let nickname:String
 }
 struct Room: Codable, Identifiable {
+    let distance: Int
     let hashTag: String
     let id: Int
     let latitude: Double

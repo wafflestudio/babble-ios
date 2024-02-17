@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MakeRoomView: View {
     @ObservedObject var viewModel: ChatRoomsViewModel
+    var navigateToChatView: (Room) -> Void
     
     @State var nickname: String = ""
     @State var roomName: String = ""
@@ -75,9 +76,8 @@ struct MakeRoomView: View {
                     Button(action: {
                         print(selectedOption!.hashTag)
                         viewModel.createChatRoom(hashTag: selectedOption!.hashTag, nickname: nickname, roomName: roomName) { room in
-                            print("hihi")
                             self.room = room
-                            self.shouldNavigateToChatRoom = true
+                            navigateToChatView(room)
                         }
                     }) {
                         Text("만들기")
@@ -90,9 +90,9 @@ struct MakeRoomView: View {
                 }
             }
             
-            NavigationLink(destination: ChatRoomView(viewModel: ChatViewModel(chatRoom: room!)), isActive: $shouldNavigateToChatRoom) {
+            /*NavigationLink(destination: ChatRoomView(viewModel: ChatViewModel(chatRoom: room!)), isActive: $shouldNavigateToChatRoom) {
                 EmptyView()
-            }
+            }*/
             
         }
         .padding(.horizontal)

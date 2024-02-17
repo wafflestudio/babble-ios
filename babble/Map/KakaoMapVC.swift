@@ -88,7 +88,6 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     
     func setupLocationDependentFeatures() {
         _currentPositionPoi?.show()
-        _currentDirectionArrowPoi?.show()
         _moveOnce = true
         createPolygonShape()
         viewmodel?.fetchChatRooms(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude) {
@@ -158,7 +157,7 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
             //mapView.moveCamera(CameraUpdate.make(target: center, zoomLevel: 15, mapView: mapView))
         }
         
-        _currentDirectionPoi?.shareTransformWithShape(shape!)
+        _currentPositionPoi?.shareTransformWithShape(shape!)
     }
 
     
@@ -175,22 +174,10 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         let view = mapController?.getView("mapview") as! KakaoMap
         let manager = view.getLabelManager()
         //let marker = PoiIconStyle(symbol: UIImage(named: "map_ico_marker.png"))
-        let marker = PoiIconStyle(symbol: UIImage(systemName: "figure.wave"))
+        let marker = PoiIconStyle(symbol: UIImage(named: "LocMarker"))
         let perLevelStyle1 = PerLevelPoiStyle(iconStyle: marker, level: 0)
         let poiStyle1 = PoiStyle(styleID: "positionPoiStyle", styles: [perLevelStyle1])
         manager.addPoiStyle(poiStyle1)
-        
-        //let direction = PoiIconStyle(symbol: UIImage(named: "map_ico_marker_direction.png"), anchorPoint: CGPoint(x: 0.5, y: 0.995))
-        let direction = PoiIconStyle(symbol: UIImage(named: "direction"), anchorPoint: CGPoint(x: 0.5, y: 0.995))
-        let perLevelStyle2 = PerLevelPoiStyle(iconStyle: direction, level: 0)
-        let poiStyle2 = PoiStyle(styleID: "directionArrowPoiStyle", styles: [perLevelStyle2])
-        manager.addPoiStyle(poiStyle2)
-        
-        //let area = PoiIconStyle(symbol: UIImage(named: "map_ico_direction_area.png"), anchorPoint: CGPoint(x: 0.5, y: 0.995))
-        let area = PoiIconStyle(symbol: UIImage(systemName: "atriangle.fill"), anchorPoint: CGPoint(x: 0.5, y: 0.995))
-        let perLevelStyle3 = PerLevelPoiStyle(iconStyle: area, level: 0)
-        let poiStyle3 = PoiStyle(styleID: "directionPoiStyle", styles: [perLevelStyle3])
-        manager.addPoiStyle(poiStyle3)
     }
     
     func createPois() {
@@ -203,40 +190,10 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         let poiOption = PoiOptions(styleID: "positionPoiStyle", poiID: "PositionPOI")
         poiOption.rank = 3
         poiOption.transformType = .decal    //화면이 기울여졌을 때, 지도를 따라 기울어져서 그려지도록 한다.
-        poiOption.clickable = true
         //let position: MapPoint = MapPoint(longitude: 127.108678, latitude: 37.402001)
         let position: MapPoint = MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude)
         
         _currentPositionPoi = positionLayer?.addPoi(option:poiOption, at: position)
-        let _ = _currentPositionPoi?.addPoiTappedEventHandler(target: self, handler: KakaoMapVC.clickedMyLocation)
-        
-        // 현위치마커의 방향표시 화살표에 해당하는 POI
-        let poiOption2 = PoiOptions(styleID: "directionArrowPoiStyle", poiID: "DirectionArrowPOI")
-        poiOption2.rank = 1
-        poiOption2.transformType = .absoluteRotationDecal
-        
-        _currentDirectionArrowPoi = positionLayer?.addPoi(option:poiOption2, at: position)
-        
-        // 현위치마커의 부채꼴모양 방향표시에 해당하는 POI
-        let poiOption3 = PoiOptions(styleID: "directionPoiStyle", poiID: "DirectionPOI")
-        poiOption3.rank = 2
-        poiOption3.transformType = .decal
-        
-        _currentDirectionPoi = directionLayer?.addPoi(option:poiOption3, at: position)
-        
-        _currentPositionPoi?.shareTransformWithPoi(_currentDirectionArrowPoi!)  //몸통이 방향표시와 위치 및 방향을 공유하도록 지정한다. 몸통 POI의 위치가 변경되면 방향표시 POI의 위치도 변경된다. 반대는 변경안됨.
-        _currentDirectionArrowPoi?.shareTransformWithPoi(_currentDirectionPoi!) //방향표시가 부채꼴모양과 위치 및 방향을 공유하도록 지정한다.
-    }
-    
-    func clickedMyLocation(_ param: PoiInteractionEventParam) {
-        viewmodel?.latitude = _currentPosition.latitude
-        viewmodel?.longitude = _currentPosition.longitude
-        let swiftUIView = MakeRoomView(viewModel: viewmodel!)
-        let hostingController = UIHostingController(rootView: swiftUIView)
-        self.navigationController?.pushViewController(hostingController, animated: true)
-
-        print(param.poiItem.itemID)
-        
     }
 
     
@@ -252,7 +209,7 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
         let manager = mapView.getLabelManager()
                 
-        let marker = PoiIconStyle(symbol: UIImage(systemName: "message.fill"))
+        let marker = PoiIconStyle(symbol: UIImage(named: "Bubble"))
         let perLevelStyle1 = PerLevelPoiStyle(iconStyle: marker, level: 0)
         let poiStyle1 = PoiStyle(styleID: "chatroomStyle", styles: [perLevelStyle1])
         manager.addPoiStyle(poiStyle1)
@@ -291,17 +248,36 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     }
     
     func clickedChatroom(_ param: PoiInteractionEventParam) {
-        @State var isLoggedIn = false
+        let mapView = mapController?.getView("mapview") as! KakaoMap
+
         let roomId = param.poiItem.itemID
         let room = viewmodel!.rooms.first{
             room in room.id == Int(roomId)
         }
-        let swiftUIView = ChatRoomView(viewModel: ChatViewModel(chatRoom: room!))
-        let hostingController = UIHostingController(rootView: swiftUIView)
-        self.navigationController?.pushViewController(hostingController, animated: true)
-
-        print(param.poiItem.itemID)
         
+        if let latitude = room?.latitude, let longitude = room?.longitude {
+            mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: longitude, latitude: latitude), mapView: mapView))
+        }
+        
+        let smallId = UISheetPresentationController.Detent.Identifier("small")
+        let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallId) { context in
+            return 80
+        }
+        sheetPresentationController?.detents = [smallDetent, .medium(), .large()]
+        
+        let swiftUIView = ChatroomInfoView(delegate: self, room: room)
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        
+        if let sheetController = hostingController.sheetPresentationController {
+            let smallId = UISheetPresentationController.Detent.Identifier("small")
+            let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallId) { _ in 160 } // Custom small size
+            sheetController.detents = [smallDetent, .medium(), .large()] // Define available detents.
+            sheetController.prefersGrabberVisible = true // Show the grabber
+        }
+        
+        // Present modally
+        self.present(hostingController, animated: true, completion: nil)
+
     }
 
 
@@ -321,7 +297,7 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         
         let button = GuiButton("CPB")
         //button.image = UIImage(named: "track_location_btn.png")
-        button.image = UIImage(systemName: "location.circle")
+        button.image = UIImage(systemName: "plus.circle.fill")
 
         spriteGui.addChild(button)
         
@@ -331,47 +307,34 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     }
     
     func guiDidTapped(_ gui: KakaoMapsSDK.GuiBase, componentName: String) {
-//        let mapView = mapController?.getView("mapview") as! KakaoMap
-        let button = gui.getChild(componentName) as! GuiButton
-        switch _mode {
-            case .hidden:
-                _mode = .show   //현위치마커 표시
-                //button.image = UIImage(named: "track_location_btn_pressed.png")
-                button.image = UIImage(systemName: "location.circle")
-                _timer = Timer.init(timeInterval: 0.3, target: self, selector: #selector(self.updateCurrentPositionPOI), userInfo: nil, repeats: true)
-                RunLoop.current.add(_timer!, forMode: RunLoop.Mode.common)
-                startUpdateLocation()
-                _currentPositionPoi?.show()
-                _currentDirectionArrowPoi?.show()
-                _moveOnce = true
-                break;
-            case .show:
-                _mode = .tracking   //현위치마커 추적모드
-                //button.image = UIImage(named: "track_location_btn_compass_on.png")
-                button.image = UIImage(systemName: "location.circle")
-                let mapView = mapController?.getView("mapview") as! KakaoMap
-                let trackingManager = mapView.getTrackingManager()
-                trackingManager.startTrackingPoi(_currentDirectionArrowPoi!)
-                trackingManager.isTrackingRoll = true
-                _currentDirectionArrowPoi?.hide()
-                _currentDirectionPoi?.show()
-                break;
-            case .tracking:
-                _mode = .show     //현위치마커 숨김
-                //button.image = UIImage(named: "track_location_btn.png")
-                button.image = UIImage(systemName: "location.circle")
-                let mapView = mapController?.getView("mapview") as! KakaoMap
-                let trackingManager = mapView.getTrackingManager()
-                trackingManager.stopTracking()
-                _currentDirectionArrowPoi?.show()
-                _currentDirectionPoi?.hide()
+        viewmodel?.latitude = _currentPosition.latitude
+        viewmodel?.longitude = _currentPosition.longitude        
+        let swiftUIView = MakeRoomView(viewModel: viewmodel!) {
+            room in
+            self.navigateToChatView(room: room)
         }
-        gui.updateGui()
+
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.pushViewController(hostingController, animated: true)
     }
+    
+    private func navigateToChatView(room: Room) {
+        let chatView = ChatRoomView(viewModel: ChatViewModel(chatRoom: room))
+        let chatViewController = UIHostingController(rootView: chatView)
+        
+        self.navigationController?.navigationBar.isHidden = true
+        self.navigationController?.pushViewController(chatViewController, animated: true)
+
+        if var viewControllers = self.navigationController?.viewControllers {
+            viewControllers.removeAll(where: { $0 is UIHostingController<MakeRoomView> })
+            self.navigationController?.viewControllers = viewControllers
+        }
+    }
+
     
     @objc func updateCurrentPositionPOI() {
         _currentPositionPoi?.moveAt(MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), duration: 150)
-        _currentDirectionArrowPoi?.rotateAt(_currentHeading, duration: 150)
         if _moveOnce {
             let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
             mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), mapView: mapView))
@@ -442,7 +405,6 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     
     var _timer: Timer?
     var _currentPositionPoi: Poi?
-    var _currentDirectionArrowPoi: Poi?
     var _currentDirectionPoi: Poi?
     var _currentHeading: Double
     var _currentPosition: GeoCoordinate
@@ -465,5 +427,21 @@ extension UIColor {
         a = CGFloat((hex & 0x000000ff)) / 255.0
         
         self.init(red: r, green: g, blue: b, alpha: a)
+    }
+}
+
+protocol ChatroomInfoViewDelegate: AnyObject {
+    func didRequestToJoinChatroom(_ room: Room)
+}
+
+extension KakaoMapVC: ChatroomInfoViewDelegate {
+    
+    func didRequestToJoinChatroom(_ room: Room) {
+        print("heloooooooooooo")
+        let chatViewModel = ChatViewModel(chatRoom: room)
+        let chatView = ChatRoomView(viewModel: chatViewModel)
+        let chatViewController = UIHostingController(rootView: chatView)
+        self.navigationController?.navigationBar.isHidden = true
+        self.navigationController?.pushViewController(chatViewController, animated: true)
     }
 }

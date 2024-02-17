@@ -28,7 +28,7 @@ class ChatRoomsViewModel: ObservableObject {
     func createChatRoom(hashTag: String, nickname: String, roomName: String, completion: @escaping (Room) -> Void){
         if let latitude = self.latitude, let longitude = self.longitude {
             network.createChatRoom(hashTag: hashTag, latitude: latitude, longitude: longitude, nickname: nickname, roomName: roomName, completion: {[weak self] roomid in
-                let newRoom = Room(hashTag: hashTag, id: roomid, latitude: latitude, longitude: longitude, name: roomName)
+                let newRoom = Room(distance: 0, hashTag: hashTag, id: roomid, latitude: latitude, longitude: longitude, name: roomName)
                 DispatchQueue.main.async {
                     self?.rooms.append(newRoom)
                     completion(newRoom)
