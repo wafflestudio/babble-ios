@@ -196,6 +196,7 @@ struct WriteView:View{
                 
                 Button(action: {
                     onPost(text)
+                    text = ""
                     isFocused = false
                 }, label: {
                     Image(systemName: "paperplane").foregroundColor(Color("Blue5"))

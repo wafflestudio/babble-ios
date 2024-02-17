@@ -28,7 +28,7 @@ struct ChatDay:Identifiable{
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "y년 M월 d일"
         let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "a h시 m분"
+        timeFormatter.dateFormat = "a h:m"
         timeFormatter.locale = Locale(identifier: "ko_KR")
         let date = Date(timeIntervalSince1970: TimeInterval(chat.createdTimeInSec))
         let day = dayFormatter.string(from: date)
@@ -48,7 +48,7 @@ struct ChatDay:Identifiable{
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "y년 M월 d일"
         let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "a h시 m분"
+        timeFormatter.dateFormat = "a h:m"
         timeFormatter.locale = Locale(identifier: "ko_KR")
         for chat in response.chats.reversed(){
             let date = Date(timeIntervalSince1970: TimeInterval(chat.createdTimeInSec))
