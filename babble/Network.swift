@@ -192,16 +192,18 @@ class Network {
             
         
     }
-    func createChatRoom(hashTag:String,latitude:String,longitude:String,nickname:String,roomName:String,completion:@escaping(Int)->(),onError:@escaping(String)->()){
+    func createChatRoom(hashTag:String,latitude:Double,longitude:Double,nickname:String,roomName:String,completion:@escaping(Int)->(),onError:@escaping(String)->()){
         let fullURL = URL(string:baseURL + "/api/chat/rooms")!
-        let params = ["hashTag":hashTag,"latitude":latitude,"longitude":longitude,"nickname":nickname,roomName:roomName]
+        let params = ["hashTag":hashTag,"latitude":String(latitude),"longitude":String(longitude),"nickname":nickname,"roomName":roomName]
        
         let header:HTTPHeaders = ["Content-Type":"application/json"]
-        AF.request(fullURL,method:.post,parameters: params,encoder: JSONParameterEncoder.default,headers:header,interceptor:JWTInterceptor()).responseData{
+        AF.request(fullURL,method:.post,parameters: params,encoder: JSONParameterEncoder.default,headers:header,interceptor:JWTInterceptor()).response{
                 response in
                 switch response.result{
                 case .success(let data):
+                    print(response.response)
                     let roomId = Int((response.response!.headers["location"]!.components(separatedBy: "/").last!))!
+                    print(roomId)
                     completion(roomId)
                 case .failure(let error):
                     print("Request error: \(error)")
