@@ -71,15 +71,19 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         
         _timer = Timer.init(timeInterval: 0.3, target: self, selector: #selector(self.updateCurrentPositionPOI), userInfo: nil, repeats: true)
         RunLoop.current.add(_timer!, forMode: RunLoop.Mode.common)
+       
         startUpdateLocation()
         mapController?.initEngine()
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+   
+   /* override func viewWillDisappear(_ animated: Bool) {
         _appear = false
         mapController?.stopRendering()  //렌더링 중지.
         _timer?.invalidate()
-    }
+    }*/
 
     
     func setupLocationDependentFeatures() {
@@ -368,12 +372,15 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     @objc func updateCurrentPositionPOI() {
         _currentPositionPoi?.moveAt(MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), duration: 150)
         _currentDirectionArrowPoi?.rotateAt(_currentHeading, duration: 150)
-                
         if _moveOnce {
             let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
             mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), mapView: mapView))
             _moveOnce = false
         }
+        print("update")
+        viewmodel?.fetchChatRooms(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude, completion: {[weak self] in
+            self?.createSharedLocationPois()
+        })
 //        let mapView: KakaoMap? = mapController?.getView("mapview") as? KakaoMap
 //        let manager = mapView?.getShapeManager()
 //        let layer = manager?.getShapeLayer("shapeLayer")

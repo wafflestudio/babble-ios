@@ -68,7 +68,7 @@ class KakaoMapAPIBaseVC: UIViewController, MapControllerDelegate {
         
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+   /* override func viewWillDisappear(_ animated: Bool) {
         _appear = false
         mapController?.stopRendering()  //렌더링 중지.
     }
@@ -76,7 +76,7 @@ class KakaoMapAPIBaseVC: UIViewController, MapControllerDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         removeObservers()
         mapController?.stopEngine()     //엔진 정지. 추가되었던 ViewBase들이 삭제된다.
-    }
+    }*/
     
     // 인증 성공시 delegate 호출.
     func authenticationSucceeded() {

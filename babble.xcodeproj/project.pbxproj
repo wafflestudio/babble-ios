@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4E10F4832B80C3A300A74F3F /* KakaoMapVCWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10F4812B80C3A300A74F3F /* KakaoMapVCWrapper.swift */; };
 		4E10F4842B80C3A300A74F3F /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10F4822B80C3A300A74F3F /* MapView.swift */; };
+		4E1540692B80F12B003AAEA1 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1540682B80F12B003AAEA1 /* LocationManager.swift */; };
 		4E10F4932B80E68600A74F3F /* MakeRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10F4912B80E68600A74F3F /* MakeRoomView.swift */; };
 		4E262DAE2B7B7F9200439AF9 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E262DAD2B7B7F9200439AF9 /* ChatViewModel.swift */; };
 		4E262DB02B7CCA4200439AF9 /* RoomEnterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E262DAF2B7CCA4200439AF9 /* RoomEnterView.swift */; };
@@ -52,6 +53,7 @@
 		0EE07D0D0B7DEF47B63C1CEF /* Pods-babble.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-babble.release.xcconfig"; path = "Target Support Files/Pods-babble/Pods-babble.release.xcconfig"; sourceTree = "<group>"; };
 		4E10F4812B80C3A300A74F3F /* KakaoMapVCWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KakaoMapVCWrapper.swift; sourceTree = "<group>"; };
 		4E10F4822B80C3A300A74F3F /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		4E1540682B80F12B003AAEA1 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4E10F4912B80E68600A74F3F /* MakeRoomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MakeRoomView.swift; sourceTree = "<group>"; };
 		4E262DAD2B7B7F9200439AF9 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		4E262DAF2B7CCA4200439AF9 /* RoomEnterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomEnterView.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				4EE859832B7653BC00358B5C /* HeaderView.swift */,
 				4E262DAD2B7B7F9200439AF9 /* ChatViewModel.swift */,
 				4E262DAF2B7CCA4200439AF9 /* RoomEnterView.swift */,
+				4E1540682B80F12B003AAEA1 /* LocationManager.swift */,
 			);
 			path = chat;
 			sourceTree = "<group>";
@@ -406,6 +409,7 @@
 			files = (
 				4EE859822B762FAC00358B5C /* ChatView.swift in Sources */,
 				4E10F4832B80C3A300A74F3F /* KakaoMapVCWrapper.swift in Sources */,
+				4E1540692B80F12B003AAEA1 /* LocationManager.swift in Sources */,
 				4E6A10012B750B7E00DDF754 /* babbleApp.swift in Sources */,
 				4EF038002B7B9DC600063429 /* KakaoMapVC.swift in Sources */,
 				4EE859842B7653BC00358B5C /* HeaderView.swift in Sources */,

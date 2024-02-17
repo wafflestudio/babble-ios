@@ -50,6 +50,13 @@ struct ChatRoomView:View{
             } .navigationBarBackButtonHidden(true)
                 .interactiveDismissDisabled()
         })
+        .alert("채팅방 위치에서 벗어났습니다.",isPresented: $viewModel.outOfLocation){
+            Button("OK"){
+                viewModel.stopPolling()
+                viewModel.outOfLocation = false
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
      
         
         
