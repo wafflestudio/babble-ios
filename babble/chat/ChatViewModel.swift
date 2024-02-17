@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+import CoreLocation
 typealias NetworkChat = Chat
 struct ChatDay:Identifiable{
     struct Chat:Identifiable{
@@ -75,7 +75,9 @@ struct ChatDay:Identifiable{
     }
 }
 class ChatViewModel:ObservableObject{
+    
     let network = Network()
+    let manager:LocationManager
     private var timer:Timer?
     @Published
     var chatDays:[ChatDay] = []
@@ -87,10 +89,12 @@ class ChatViewModel:ObservableObject{
     var chatterCount:Int = 0
     @Published
     var writingParentChat: ChatDay.Chat?
+    @Published
+    var outOfLocation = false
     init(chatRoom:Room) {
-               
         self.chatroom = chatRoom
-        network.loadChats(longitude: "0.0", latitude: "0.0", id: chatroom.id, completion: {[weak self]
+        self.manager = LocationManager(latitude: chatRoom.latitude, longitude: chatRoom.longitude)
+        network.loadChats(longitude: "\(manager.longitude)", latitude: "\(manager.latitude)", id: chatroom.id, completion: {[weak self]
             response in
             self?.notEntered = !response.isChatter
             self?.chatDays = ChatDay.from(response: response)
@@ -98,40 +102,45 @@ class ChatViewModel:ObservableObject{
             self?.chatterCount = response.chatterCount
             self?.startPolling()
         }, onError: {
-            _ in
+            [weak self] _ in
+            self?.outOfLocation = true
+
         })
     }
     private func startPolling(){
         self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true){
             [weak self]
             timer in
-            self?.network.loadChats(longitude: "0.0", latitude: "0.0", id: self!.chatroom.id){[weak self]
+            self?.network.loadChats(longitude: "\(self!.manager.longitude)", latitude: "\(self!.manager.latitude)", id: self!.chatroom.id){[weak self]
                 response in
+                print(response)
                 self?.chatroom = response.room
                 self?.chatDays = ChatDay.from(response: response)
                 self?.chatterCount = response.chatterCount
                 self?.notEntered = !response.isChatter
-            }onError: { error in
-                
+            }onError: { [weak self]error in
+                self?.outOfLocation = true
+                print("out of location")
             }
         }    }
     func enterRoom(nickname:String){
-        network.enterChatroom(longitude: "0.0", latitude: "0.0", id: chatroom.id, nickname: nickname) { [weak self]
+        network.enterChatroom(longitude: "\(manager.longitude)", latitude: "\(manager.latitude)", id: chatroom.id, nickname: nickname) { [weak self]
             response in
             self?.notEntered = false
-        } onError:{
+        } onError:{[weak self]
             error in
-            
+            self?.outOfLocation = true
         }
     }
     func postChat(content:String){
-        network.postChat(longitude: "0.0", latitude: "0.0", content: content, roomId: chatroom.id,parentId: writingParentChat?.id){ [weak self]
+        network.postChat(longitude: "\(manager.longitude)", latitude: "\(manager.latitude)", content: content, roomId: chatroom.id,parentId: writingParentChat?.id){ [weak self]
             response in
             if let self{
                 chatDays = ChatDay.addChat(chatDays: chatDays, chat: response)
             }
-        }onError: { error in
-            
+        }onError: {[weak self] error in
+            self?.outOfLocation = true
+
         }
     }
     func stopPolling(){
