@@ -141,7 +141,7 @@ struct ChatView:View{
                         timeView(time:time)
                     }
                     
-                }.frame(width:UIScreen.main.bounds.width*0.7,alignment: isMine ? .trailing : .leading)
+                }.frame(width:UIScreen.main.bounds.width*0.9,alignment: isMine ? .trailing : .leading)
             }.frame(width:UIScreen.main.bounds.width,alignment: isMine ? .trailing : .leading).padding(EdgeInsets(top: 5, leading: isMine ? -10 : 10, bottom: 5, trailing: 0))
             
         
