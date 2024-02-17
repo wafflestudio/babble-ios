@@ -11,7 +11,7 @@ import KakaoSDKAuth
 import KakaoSDKUser
 
 class Network {
-    let baseURL = "http://localhost:8080"
+    let baseURL = "https://babble.wafflestudio.com"
 
     func kakaoLogin(completionHandler:@escaping (String)->Void){
         if (UserApi.isKakaoTalkLoginAvailable()) {
@@ -75,6 +75,7 @@ class Network {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                        let accessToken = json["accessToken"] as? String {
                         UserDefaults.standard.set(accessToken, forKey: "accessToken")
+                        print(accessToken)
                         completionHandler("success")
                     } else {
                         completionHandler("error")
