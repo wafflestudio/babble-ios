@@ -422,7 +422,7 @@
 				4EB4E65A2B7B4E70008408FD /* ChatroomsViewModel.swift in Sources */,
 				4EB153022B774739007D1E4C /* Network.swift in Sources */,
 				4E262DAE2B7B7F9200439AF9 /* ChatViewModel.swift in Sources */,
-				4EB153062B774F13007D1E4C /* ContentView.swift in Sources */,
+				4EB153062B774F13007D1E4C /* ContentView.swift in Sources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
