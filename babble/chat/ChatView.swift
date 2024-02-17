@@ -192,8 +192,8 @@ struct WriteView:View{
                 }
             }
             HStack(alignment:.center){
-                TextField("", text: $text, axis: .vertical)    .background(RoundedRectangle(cornerRadius: 5).fill(Color("Blue5"))).padding().focused($isFocused)
-                
+                TextFieldStyled("", text: $text)
+                    .focused($isFocused)
                 Button(action: {
                     onPost(text)
                     text = ""
@@ -204,7 +204,22 @@ struct WriteView:View{
             }
         }.background(Color("Blue4"))
     }
+    
+    @ViewBuilder
+    func TextFieldStyled(_ placeholder: String, text: Binding<String>) -> some View {
+        TextField(placeholder, text: text)
+            .padding() // Add padding inside the TextField for text content
+            .background(Color.white) // Background color of the TextField
+            .cornerRadius(5) // Corner radius of the TextField background
+            .overlay(
+                RoundedRectangle(cornerRadius: 5) // The shape of the border
+                    .stroke(Color.blue, lineWidth: 1) // Border color and width
+            )
+            .padding(.horizontal) // Optional: Adds padding around the TextField to inset it within its container
+    }
+
 }
+
 
 
 
