@@ -266,7 +266,11 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     
     func clickedChatroom(_ param: PoiInteractionEventParam) {
         @State var isLoggedIn = false
-        let swiftUIView = LoginView(isLoggedIn: $isLoggedIn)
+        let roomId = param.poiItem.itemID
+        let room = viewmodel!.rooms.first{
+            room in room.id == Int(roomId)
+        }
+        let swiftUIView = ChatRoomView(viewModel: ChatViewModel(chatRoom: room!))
         let hostingController = UIHostingController(rootView: swiftUIView)
         self.navigationController?.pushViewController(hostingController, animated: true)
 
