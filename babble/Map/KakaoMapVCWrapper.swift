@@ -15,7 +15,7 @@ struct KakaoMapVCWrapper : UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> some UIViewController {
         let kakaomapVC = KakaoMapVC()
         kakaomapVC.viewmodel = chatRoomsViewModel // Pass the ViewModel to the UIViewController
-        return kakaomapVC
+        return UINavigationController(rootViewController: kakaomapVC)
     }
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {

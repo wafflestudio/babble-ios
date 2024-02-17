@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import CoreLocation
 import KakaoMapsSDK
+import SwiftUI
 
 enum Mode: Int {
     case hidden = 0,
@@ -264,7 +265,13 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     }
     
     func clickedChatroom(_ param: PoiInteractionEventParam) {
-      print(param.poiItem.itemID)
+        @State var isLoggedIn = false
+        let swiftUIView = LoginView(isLoggedIn: $isLoggedIn)
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        self.navigationController?.pushViewController(hostingController, animated: true)
+
+        print(param.poiItem.itemID)
+        
     }
 
 
