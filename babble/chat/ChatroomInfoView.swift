@@ -26,14 +26,14 @@ struct ChatroomInfoView: View {
     var header: some View {
         Text(room!.name)
             .font(.headline)
-            .padding(5)
+            .padding(10)
     }
 
     var chatroomDetails: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "graduationcap.fill")
-                Text("카테고리: " + room!.hashTag) // "Participants: X people"
+                Text(room!.hashTag) // "Participants: X people"
             }
 
             HStack {
@@ -55,7 +55,7 @@ struct ChatroomInfoView: View {
                 .foregroundColor(.white)
                 .background(Color.blue)
                 .cornerRadius(25)
-                .padding(.horizontal)
         }
+        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
     }
 }

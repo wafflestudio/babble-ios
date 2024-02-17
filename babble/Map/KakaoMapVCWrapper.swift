@@ -15,7 +15,10 @@ struct KakaoMapVCWrapper : UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> some UIViewController {
         let kakaomapVC = KakaoMapVC()
         kakaomapVC.viewmodel = chatRoomsViewModel // Pass the ViewModel to the UIViewController
-        return UINavigationController(rootViewController: kakaomapVC)
+        let navigationController = UINavigationController(rootViewController: kakaomapVC)
+        navigationController.isNavigationBarHidden = true
+
+        return navigationController
     }
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {

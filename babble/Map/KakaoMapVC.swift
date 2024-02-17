@@ -236,12 +236,17 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         
         if let rooms = viewmodel?.rooms {
             for room in rooms {
-                let point = MapPoint(longitude: room.longitude, latitude: room.latitude)
-                let poiOptions = PoiOptions(styleID: "chatroomStyle", poiID: "\(room.id)")
-                poiOptions.clickable = true
-                if let poi = layer?.addPoi(option: poiOptions, at: point) {
-                    let _ = poi.addPoiTappedEventHandler(target: self, handler: KakaoMapVC.clickedChatroom)
-                    poi.show()
+                if !addedPoiIds.contains("\(room.id)") {
+                    let point = MapPoint(longitude: room.longitude, latitude: room.latitude)
+                    let poiOptions = PoiOptions(styleID: "chatroomStyle", poiID: "\(room.id)")
+                    poiOptions.clickable = true
+                    
+                    if let poi = layer?.addPoi(option: poiOptions, at: point) {
+                        let _ = poi.addPoiTappedEventHandler(target: self, handler: KakaoMapVC.clickedChatroom)
+                        poi.show()
+                        // Mark this room's POI as added
+                        addedPoiIds.insert("\(room.id)")
+                    }
                 }
             }
         }
@@ -256,7 +261,8 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         }
         
         if let latitude = room?.latitude, let longitude = room?.longitude {
-            mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: longitude, latitude: latitude), mapView: mapView))
+            let cameraUpdate = CameraUpdate.make(target: MapPoint(longitude: longitude, latitude: latitude), mapView: mapView)
+            mapView.animateCamera(cameraUpdate: cameraUpdate, options: CameraAnimationOptions(autoElevation: false, consecutive: true, durationInMillis: 180))
         }
         
         let smallId = UISheetPresentationController.Detent.Identifier("small")
@@ -270,7 +276,7 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         
         if let sheetController = hostingController.sheetPresentationController {
             let smallId = UISheetPresentationController.Detent.Identifier("small")
-            let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallId) { _ in 160 } // Custom small size
+            let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallId) { _ in 200 } // Custom small size
             sheetController.detents = [smallDetent, .medium(), .large()] // Define available detents.
             sheetController.prefersGrabberVisible = true // Show the grabber
         }
@@ -297,8 +303,9 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         
         let button = GuiButton("CPB")
         //button.image = UIImage(named: "track_location_btn.png")
-        button.image = UIImage(systemName: "plus.circle.fill")
-
+        let largeConfig = UIImage.SymbolConfiguration(pointSize: 35, weight: .medium, scale: .default) // Adjust pointSize as needed
+        button.image = UIImage(systemName: "plus.circle.fill", withConfiguration: largeConfig)
+        
         spriteGui.addChild(button)
         
         spriteLayer.addSpriteGui(spriteGui)
@@ -315,6 +322,7 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         }
 
         let hostingController = UIHostingController(rootView: swiftUIView)
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
         self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.pushViewController(hostingController, animated: true)
     }
@@ -337,7 +345,7 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
         _currentPositionPoi?.moveAt(MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), duration: 150)
         if _moveOnce {
             let mapView: KakaoMap = mapController?.getView("mapview") as! KakaoMap
-            mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), mapView: mapView))
+            mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), zoomLevel: 16, mapView: mapView))
             _moveOnce = false
         }
         print("update")
@@ -416,6 +424,7 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
     var _polygons: [MapPolygon]?
     var _shapeLayer: ShapeLayer?
     var _shape: MapPolygonShape?
+    var addedPoiIds: Set<String> = []
 }
 
 extension UIColor {
@@ -437,7 +446,6 @@ protocol ChatroomInfoViewDelegate: AnyObject {
 extension KakaoMapVC: ChatroomInfoViewDelegate {
     
     func didRequestToJoinChatroom(_ room: Room) {
-        print("heloooooooooooo")
         let chatViewModel = ChatViewModel(chatRoom: room)
         let chatView = ChatRoomView(viewModel: chatViewModel)
         let chatViewController = UIHostingController(rootView: chatView)

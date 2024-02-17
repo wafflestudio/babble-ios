@@ -11,94 +11,146 @@ struct MakeRoomView: View {
     @ObservedObject var viewModel: ChatRoomsViewModel
     var navigateToChatView: (Room) -> Void
     
-    @State var nickname: String = ""
-    @State var roomName: String = ""
+    @State private var nickname: String = ""
+    @State private var roomName: String = ""
     
     private let options = RoomType.allCases
     @State private var selectedOption: RoomType?
-
-    @State private var shouldNavigateToChatRoom = false
-    @State private var room : Room?
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             Text("새로운 채팅방 생성")
+                .font(.largeTitle)
+                .bold()
+            
             Text("태그를 선택해주세요")
+                .font(.title3)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(options, id: \.self) { option in
-                        Button(action: {
-                            self.selectedOption = option
-                        }) {
-                            Text(option.rawValue)
-                                .padding()
-                                .background(self.selectedOption == option ? Color.blue : Color.gray)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                        }
+                        OptionButton(option: option, selectedOption: $selectedOption)
                     }
                 }
             }
-
-
+            .padding(.vertical)
 
             switch selectedOption?.rawValue {
                 case "강의실":
                     Text("강의동, 호수를 입력해주세요")
-                    TextField("301동 308호, 83동 301호, ...", text: $roomName)
+                    TextFieldStyled("301동 308호, 83동 301호, ...", text: $roomName)
                 case "학생 식당":
                     Text("식당 이름을 입력해주세요")
-                    TextField("학생회관 식당, 자하연 식당, ...", text: $roomName)
+                    TextFieldStyled("학생회관 식당, 자하연 식당, ...", text: $roomName)
                 case "식당":
                     Text("식당 이름을 입력해주세요")
-                    TextField("포포인, 비비큐, ...", text: $roomName)
+                    TextFieldStyled("포포인, 비비큐, ...", text: $roomName)
                 case "도서관":
                     Text("도서관 이름, 층을 입력해주세요")
-                    TextField("관정도서관 7층, 신양공학학술정보관 1층, ...", text: $roomName)
+                TextFieldStyled("관정도서관 7층, 신양공학학술정보관 1층, ...", text: $roomName)
                 case "동아리방":
                     Text("동아리 이름을 입력해주세요")
-                    TextField("와플스튜디오, SCSC, ...", text: $roomName)
+                    TextFieldStyled("와플스튜디오, SCSC, ...", text: $roomName)
                 case "과방":
                     Text("과 이름을 입력해주세요")
-                    TextField("전기정보공학부, 컴퓨터공학부, ...", text: $roomName)
+                    TextFieldStyled("전기정보공학부, 컴퓨터공학부, ...", text: $roomName)
                 case "카페":
                     Text("카페 이름을 입력해주세요")
-                    TextField("관정 파스쿠찌, 자하연 느티나무, ...", text: $roomName)
+                    TextFieldStyled("관정 파스쿠찌, 자하연 느티나무, ...", text: $roomName)
                 default:
                     EmptyView()
             }
             
-            if selectedOption != nil {
+            if selectedOption != nil && !roomName.isEmpty {
                 Text("채팅방에서 사용할 이름을 입력해주세요")
-                TextField("닉네임", text: $nickname)
-                if roomName != "" {
-                    Button(action: {
-                        print(selectedOption!.hashTag)
-                        viewModel.createChatRoom(hashTag: selectedOption!.hashTag, nickname: nickname, roomName: roomName) { room in
-                            self.room = room
-                            navigateToChatView(room)
-                        }
-                    }) {
-                        Text("만들기")
-                            .padding()
-                            .background(!nickname.isEmpty ? Color.blue : Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                    .font(.headline)
+                    .padding(.top)
+                
+                TextFieldStyled("닉네임", text: $nickname)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal)
+                
+                CreateRoomButton(nickname: $nickname, roomName: roomName, selectedOption: selectedOption, action: {
+                    viewModel.createChatRoom(hashTag: selectedOption!.hashTag, nickname: nickname, roomName: roomName) { room in
+                        navigateToChatView(room)
                     }
-                    .disabled(roomName.isEmpty) // Disables the button if roomName is empty
-                }
+                })
+                .padding(.top)
             }
             
-            /*NavigationLink(destination: ChatRoomView(viewModel: ChatViewModel(chatRoom: room!)), isActive: $shouldNavigateToChatRoom) {
-                EmptyView()
-            }*/
-            
+            Spacer()
         }
-        .padding(.horizontal)
-
+        .padding()
+        
+    }
+    
+    @ViewBuilder
+    func TextFieldStyled(_ placeholder: String, text: Binding<String>) -> some View {
+        TextField(placeholder, text: text)
+            .padding() // Add padding inside the TextField for text content
+            .background(Color.white) // Background color of the TextField
+            .cornerRadius(5) // Corner radius of the TextField background
+            .overlay(
+                RoundedRectangle(cornerRadius: 5) // The shape of the border
+                    .stroke(Color.blue, lineWidth: 1) // Border color and width
+            )
+            .padding(.horizontal) // Optional: Adds padding around the TextField to inset it within its container
     }
 
+}
+
+struct OptionButton: View {
+    let option: RoomType
+    @Binding var selectedOption: RoomType?
+    
+    var body: some View {
+        Button(action: {
+            self.selectedOption = option
+        }) {
+            Text(option.rawValue)
+                .padding()
+                .background(self.selectedOption == option ? Color.blue : Color.gray)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+        }
+    }
+}
+
+struct RoomDetailInputView: View {
+    var prompt: String
+    @Binding var text: String
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(prompt)
+                .font(.headline)
+                .padding(.bottom, 5)
+            
+            TextField("", text: $text)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal)
+        }
+    }
+}
+
+struct CreateRoomButton: View {
+    @Binding var nickname: String
+    var roomName: String
+    var selectedOption: RoomType?
+    var action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text("만들기")
+                .bold()
+                .frame(minWidth: 0, maxWidth: .infinity)
+                .padding()
+                .background(!nickname.isEmpty ? Color.blue : Color.gray)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+        }
+        .disabled(roomName.isEmpty || nickname.isEmpty)
+    }
 }
 
 enum RoomType: String, CaseIterable {
