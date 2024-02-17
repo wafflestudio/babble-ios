@@ -141,7 +141,7 @@ struct ChatView:View{
                         timeView(time:time)
                     }
                     
-                }
+                }.frame(width:UIScreen.main.bounds.width*0.7,alignment: isMine ? .trailing : .leading)
             }.frame(width:UIScreen.main.bounds.width,alignment: isMine ? .trailing : .leading).padding(EdgeInsets(top: 5, leading: isMine ? -10 : 10, bottom: 5, trailing: 0))
             
         
@@ -152,9 +152,10 @@ struct ChatView:View{
                     Text(parentContent).font(.system(size: 12))
                 }
                 Text(content)
+
             }.padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
             .overlay(RoundedRectangle(cornerRadius: 20).stroke(color,lineWidth: 1.0))
-        
+
       /*  else{
             Text(content).padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
                 .background(color)
