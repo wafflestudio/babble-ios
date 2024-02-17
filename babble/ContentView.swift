@@ -10,18 +10,18 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 
 struct ContentView: View {
-    @State private var isLoggedIn = UserDefaults.standard.bool(forKey: "isLogin")
-
+    @StateObject var contentViewModel = AppViewModel()
+    
     @StateObject var viewModel = ChatRoomsViewModel()
    
     var body: some View {
-        if isLoggedIn {
+        if contentViewModel.isAuthenticated {
             VStack {
                 MapView(chatRoomsViewModel: viewModel)
             }
 
         } else {
-           LoginView(isLoggedIn: $isLoggedIn)
+            LoginView(isLoggedIn: $contentViewModel.isAuthenticated)
                 .onOpenURL { url in
                                 if (AuthApi.isKakaoTalkLoginUrl(url)) {
                                     _ = AuthController.handleOpenUrl(url: url)

@@ -24,7 +24,14 @@ class JWTInterceptor:RequestInterceptor{
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
+            completion(.doNotRetry)
+            return
+        }
         
+        // Handle token refresh or direct user to login if retry limit is reached
+        NotificationCenter.default.post(name: NSNotification.Name("AuthTokenExpired"), object: nil)
+        completion(.doNotRetry)
     }
 }
 
