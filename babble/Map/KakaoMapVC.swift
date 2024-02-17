@@ -363,6 +363,10 @@ class KakaoMapVC: KakaoMapAPIBaseVC, GuiEventDelegate, KakaoMapEventDelegate, CL
             mapView.moveCamera(CameraUpdate.make(target: MapPoint(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude), mapView: mapView))
             _moveOnce = false
         }
+        print("update")
+        viewmodel?.fetchChatRooms(longitude: _currentPosition.longitude, latitude: _currentPosition.latitude, completion: {[weak self] in
+            self?.createSharedLocationPois()
+        })
 //        let mapView: KakaoMap? = mapController?.getView("mapview") as? KakaoMap
 //        let manager = mapView?.getShapeManager()
 //        let layer = manager?.getShapeLayer("shapeLayer")
