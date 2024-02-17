@@ -10,6 +10,7 @@ import SwiftUI
 
 class ChatRoomsViewModel: ObservableObject {
     let network = Network()
+  
     @Published var rooms: [Room] = []
 
     func fetchChatRooms(longitude: Double, latitude: Double, completion: @escaping () -> Void) {

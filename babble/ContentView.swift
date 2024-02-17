@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var isLoggedIn = UserDefaults.standard.bool(forKey: "isLogin")
 
     @StateObject var viewModel = ChatRoomsViewModel()
-
+   
     var body: some View {
         if isLoggedIn {
             VStack {
