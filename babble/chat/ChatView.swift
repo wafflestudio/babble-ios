@@ -153,8 +153,7 @@ struct ChatView:View{
                 }
                 Text(content)
             }.padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
-                .background(color.clipShape(RoundedRectangle(cornerRadius: 20)))
-               
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(color,lineWidth: 1.0))
         
       /*  else{
             Text(content).padding(EdgeInsets(top: 5.0, leading: 20.0, bottom: 5.0, trailing: 20.0))
