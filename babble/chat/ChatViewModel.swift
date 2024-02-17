@@ -14,7 +14,7 @@ struct ChatDay:Identifiable{
         var id: Int
         var isMine:Bool
         let nickname:String
-        let time:String
+        var time:String
         let content:String
         let color:Color
         let parentId:Int?
@@ -41,6 +41,13 @@ struct ChatDay:Identifiable{
         else{
             result[result.count - 1].chats.append(Chat(id: chat.id, isMine:chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname),parentId: chat.parent?.id,parentContent: chat.parent?.content))
         }
+        for i in 0..<result.count{
+            for j in 0..<result[i].chats.count-1{
+                if result[i].chats[j].time == result[i].chats[j+1].time && result[i].chats[j].nickname == result[i].chats[j+1].nickname{
+                    result[i].chats[j].time = ""
+                }
+            }
+        }
         return result
     }
     static func from(response:ChatsResponse)->[ChatDay]{
@@ -53,12 +60,19 @@ struct ChatDay:Identifiable{
         for chat in response.chats.reversed(){
             let date = Date(timeIntervalSince1970: TimeInterval(chat.createdTimeInSec))
             let day = dayFormatter.string(from: date)
-            let time = timeFormatter.string(from: date)
+            var time = timeFormatter.string(from: date)
             if chatdays.isEmpty || chatdays.last!.date != day{
                 chatdays.append(ChatDay(id: chatdays.count, date: day, chats: [Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname),parentId: chat.parent?.id,parentContent: chat.parent?.content)]))
             }
             else{
                 chatdays[chatdays.count - 1].chats.append(Chat(id: chat.id, isMine: chat.isMine, nickname: chat.chatterNickname, time: time, content: chat.content, color: colorFromNickname(chat.chatterNickname),parentId: chat.parent?.id,parentContent: chat.parent?.content))
+            }
+            for i in 0..<chatdays.count{
+                for j in 0..<chatdays[i].chats.count-1{
+                    if chatdays[i].chats[j].time == chatdays[i].chats[j+1].time && chatdays[i].chats[j].nickname == chatdays[i].chats[j+1].nickname{
+                        chatdays[i].chats[j].time = ""
+                    }
+                }
             }
             
         }
